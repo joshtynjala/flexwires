@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<componentPackage>
+    <component id="InputWireJack" class="com.flextoolbox.controls.InputWireJack"/>
+    <component id="OutputWireJack" class="com.flextoolbox.controls.OutputWireJack"/>
+    <component id="WireJack" class="com.flextoolbox.controls.WireJack"/>
+    <component id="WireSurface" class="com.flextoolbox.controls.WireSurface"/>
+</componentPackage>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="YouTube TV Example" default="build">
+
+	<property file="../../sdk.properties"/>
+	
+	<!-- 
+	These property values are only used for local builds.
+	The main build script will override them for a full build.
+	-->
+	<property name="output" location="${basedir}/output"/>
+	<property name="libs" location="../../output/flexwires/build"/>
+	
+	<target name="build" depends="prepare,build-app,cleanup"/>
+	
+	<target name="prepare">
+		<!-- copy the files required for building to the output directory -->
+		<copy overwrite="true" todir="${output}">
+			<fileset dir="${basedir}">
+			
+				<!-- main source files -->
+				<include name="YouTubeTV.mxml"/>
+				<include name="com/flextoolbox/youtubetv/controls/Television.as"/>
+				<include name="com/flextoolbox/youtubetv/controls/StaticBitmap.as"/>
+				<include name="com/choppingblock/video/YouTubeLoader.as"/>
+				<include name="com/choppingblock/video/YouTubeLoaderEvent.as"/>
+				
+				<!-- required skins and assets -->
+				<include name="assets/Skins.swf"/>
+				
+				<!-- supporting files -->
+				<include name="YouTubeTV.html"/>
+				<include name="playerProductInstall.swf"/>
+				<include name="scripts/youTubeLoader.js"/>
+				<include name="scripts/swfobject.js"/>
+				<include name="readme.txt"/>
+				
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="build-app">
+		<!--
+		Builds the example swf. Notice that we're building from
+		the files in the output directory rather than in the base.
+		We don't want extra build clutter left behind.
+		-->
+		<exec executable="${mxmlc}" failonerror="true">
+			<arg line="--default-background-color=0x000000"/>
+			<arg line="--library-path+='${libs}'"/>
+			<arg line="--output '${output}/YouTubeTV.swf'"/>
+			<arg line="'${output}/YouTubeTV.mxml'"/>
+		</exec>
+	</target>
+	
+	<target name="cleanup">
+		<!-- does nothing at the moment -->
+	</target>
+</project>

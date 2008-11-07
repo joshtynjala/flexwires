@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Flex TreeMap" default="build" basedir=".">
+
+	<property file="./sdk.properties"/>
+	<property file="./build.properties"/>
+	
+	<target name="build" depends="prepare,build-lib,cleanup"/>
+	<target name="build-all" depends="build,build-docs,build-examples,package"/>
+	
+	<target name="prepare">
+		<!-- delete old build output -->
+		<delete dir="${output}" includeemptydirs="true"/>
+	
+		<!-- copy required source files -->
+		<copy overwrite="true" todir="${source.output}">
+			<fileset dir="${source}"/>
+		</copy>
+				
+		<!-- copy informational files -->
+		<copy overwrite="true" todir="${output}">
+			<fileset dir="${basedir}">
+				<include name="license.txt"/>
+				<include name="readme.txt"/>
+			</fileset>
+		</copy>
+		
+		<!-- some useful timestamps that we'll need later -->
+		<tstamp>
+			<format property="date.today" pattern="MMddyyyy"/>
+		</tstamp>
+		<tstamp>
+			<format property="date.year" pattern="yyyy"/>
+		</tstamp>
+	</target>
+
+	<target name="cleanup">
+		<!-- nothing to do here right now -->
+	</target>
+	
+	<target name="build-lib" depends="prepare">
+	    <exec executable="${compc}" dir="${basedir}" failonerror="true">
+			<arg line="--namespace ${library.mxmlNamespace} manifest.xml"/>
+			<arg line="--source-path '${source.output}'"/>
+			<arg line="--include-namespaces ${library.mxmlNamespace}"/>
+			<arg line="--external-library-path+='${flexsdk.lib}'"/>
+			<arg line="--output '${build.output}/${library.shortName}.swc'"/>
+	    </exec>
+	</target>
+	
+	<target name="build-docs" depends="prepare">
+		<exec executable="${asdoc}" dir="${basedir}" failonerror="true">
+			<arg line="--source-path '${source.output}'"/>
+			<arg line="--doc-sources '${source.output}'"/>
+			<arg line="--footer 'Copyright ${date.year} Josh Tynjala. All rights reserved.'"/>
+			<arg line="--main-title '${library.name} by Josh Tynjala'"/>
+			<arg line="--window-title '${library.name} by Josh Tynjala'"/>
+			<arg line="--templates-path '${docs.template}'"/>
+			<arg line="--output '${docs.output}'"/>
+		</exec>
+	</target>
+	
+	<target name="build-examples" depends="build-lib">
+		<ant antfile="${examples}/IntroductionToJacks/build.xml" target="build">
+			<property name="basedir" value="${examples}/IntroductionToJacks"/>
+			<property name="output" value="${examples.output}/IntroductionToJacks"/>
+			<property name="libs" value="${build.output}"/>
+		</ant>
+
+		<ant antfile="${examples}/YouTubeTV/build.xml" target="build">
+			<property name="basedir" value="${examples}/YouTubeTV"/>
+			<property name="output" value="${examples.output}/YouTubeTV"/>
+			<property name="libs" value="${build.output}"/>
+		</ant>
+	</target>
+	
+	<target name="package">
+		<zip destfile="${library.shortName}${date.today}.zip">
+			<zipfileset dir="${output}"/>
+		</zip>
+	</target>
+	
+</project>

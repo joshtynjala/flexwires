@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:components="components.*"
+	xmlns:flextoolbox="http://www.flextoolbox.com/2006/mxml"
+	layout="absolute" creationComplete="init()" xmlns:controls="com.flextoolbox.youtubetv.controls.*">
+	
+	<!-- just the on-screen instructions for how to connect the wires -->
+	<mx:VBox id="instructions" horizontalCenter="0" verticalCenter="-230"
+		horizontalAlign="center" verticalGap="0" visible="false">
+		<mx:Label text="Connect the A/V cables from the video device to the TV."
+		 fontSize="20" color="0xffffff"/>
+		<mx:Label text="(just use your mouse to drag the wire from one connector to another)"
+			fontSize="14" color="0xffffff"/>
+	</mx:VBox>
+	
+	<!-- basically, a skinned YouTube video player -->
+	<controls:Television id="tv" horizontalCenter="-200" verticalCenter="0"
+		videoReady="videoReadyHandler()"/>
+	
+	<!-- these are the plugs on the TV -->
+	<flextoolbox:InputWireJack id="audioInput" horizontalCenter="-90" verticalCenter="110"
+		acceptedDataFormat="audio" dataChange="audioInputDataChangeHandler()"/>
+		
+	<flextoolbox:InputWireJack id="videoInput" horizontalCenter="-90" verticalCenter="130"
+		acceptedDataFormat="video" dataChange="videoInputDataChangeHandler()"/>
+	
+	<!-- we don't need a special control for the video device -->
+	<mx:Image source="@Embed(source='/assets/Skins.swf',symbol='VideoDevice')"
+		horizontalCenter="200" verticalCenter="120"/>
+	
+	<!-- these are the plugs on the video player -->
+	<flextoolbox:OutputWireJack horizontalCenter="90" verticalCenter="110"
+		dataFormat="video" data="on"/>
+	<flextoolbox:OutputWireJack horizontalCenter="90" verticalCenter="130"
+		dataFormat="audio" data="on"/>
+	
+	<mx:Script><![CDATA[
+		import mx.controls.Text;
+		import mx.managers.PopUpManager;
+	
+		private var _loadingMessage:Text;
+	
+		/**
+		 * Update videoActive on the TV when the associated wire is connected or
+		 * disconnected.
+		 */
+		private function init():void
+		{
+			this._loadingMessage = new Text();
+			this._loadingMessage.setStyle("color", 0xffffff);
+			this._loadingMessage.setStyle("fontSize", 30);
+			this._loadingMessage.setStyle("textAlign", "center");
+			this._loadingMessage.text = "LOADING VIDEO\n(please wait)";
+			PopUpManager.addPopUp(this._loadingMessage, this, true);
+			PopUpManager.centerPopUp(this._loadingMessage);
+		}
+		
+		/**
+		 * Once the video is cued up, remove the loading popup.
+		 */
+		private function videoReadyHandler():void
+		{
+			PopUpManager.removePopUp(this._loadingMessage);
+			this.instructions.visible = true;
+		}
+		
+		/**
+		 * Update audioActive on the TV when the associated wire is connected or
+		 * disconnected.
+		 */
+		private function audioInputDataChangeHandler():void
+		{
+			var audioOn:Boolean = (this.audioInput.data == "on");
+			this.tv.audioActive = audioOn;
+		}
+		
+		/**
+		 * Update videoActive on the TV when the associated wire is connected or
+		 * disconnected.
+		 */
+		private function videoInputDataChangeHandler():void
+		{
+			var videoOn:Boolean = (this.videoInput.data == "on");
+			this.tv.videoActive = videoOn;
+		}
+			
+	]]></mx:Script>
+	
+	<mx:Style>
+		Application
+		{
+			backgroundColor: #000000;
+			backgroundImage: none;
+			modalTransparency: 0.7;
+			modalTransparencyColor: #000000;
+			modalTransparencyDuration: 250;
+		}
+	</mx:Style>
+</mx:Application>
