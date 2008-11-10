@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	 xmlns:flextoolbox="http://www.flextoolbox.com/2006/mxml"
+	 width="100%" height="100%"
+	 label="3. Advanced Customization Options">
+	
+	<!-- 
+		By default, the main IWireManager is placed on the PopUpManager. Since
+		these wire jacks are inside an accordion, the wires will still show
+		when a different accordion page is visible.
+		
+		A WireSurface allows us to keep wires inside a parent container rather
+		than above the entire application.
+		
+		Additionally, we're also putting the WireSurface below the wire jacks
+		so that the wire jacks stay interactive when wires are connected. It's
+		worth noting that OutputWireJacks may have multiple connections.
+	-->
+	<flextoolbox:WireSurface id="surface" styleName="myCustomizedWireSurface"
+		width="100%" height="100%"/>
+	<!-- in the CSS from IntroductionToJacks.mxml, be sure to look at
+		the .myCustomizedWireSurface style name to see how we've customized the
+		wire renderer -->
+	
+	<!-- the instructions for this section -->
+	<mx:Text width="90%" top="20" horizontalCenter="0">
+		<mx:text>Everything in the Wires library is customizable. You can skin the wire jacks, create custom wire renderers, and even change the wire drag image.</mx:text>
+	</mx:Text>
+	
+	<!-- notice the use of connectionAngle and how the custom skin (declared in the
+		style sheet in IntroductionToJacks.mxml) makes use of this property -->
+	<flextoolbox:OutputWireJack id="output1" top="70" left="20" connectionAngle="270"
+		styleName="myCustomizedJack" wireManager="{surface}"/>
+	
+	<flextoolbox:OutputWireJack id="output2" top="70" left="60" connectionAngle="0"
+		styleName="myCustomizedJack" wireManager="{surface}"/>
+	
+	<flextoolbox:InputWireJack id="input1" bottom="70" right="20" connectionAngle="90"
+		styleName="myCustomizedJack" wireManager="{surface}"/>
+	
+	<flextoolbox:InputWireJack id="input2" bottom="70" right="60" connectionAngle="180"
+		styleName="myCustomizedJack" wireManager="{surface}"/>
+	
+</mx:Canvas>

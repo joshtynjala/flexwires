@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
-	xmlns:components="components.*"
 	xmlns:flextoolbox="http://www.flextoolbox.com/2006/mxml"
-	layout="absolute" creationComplete="init()" xmlns:controls="com.flextoolbox.youtubetv.controls.*">
+	xmlns:controls="com.flextoolbox.youtubetv.controls.*"
+	layout="absolute" creationComplete="init()">
 	
 	<!-- just the on-screen instructions for how to connect the wires -->
 	<mx:VBox id="instructions" horizontalCenter="0" verticalCenter="-230"
 		horizontalAlign="center" verticalGap="0" visible="false">
 		<mx:Label text="Connect the A/V cables from the video device to the TV."
-		 fontSize="20" color="0xffffff"/>
+			fontSize="20" color="0xffffff"/>
 		<mx:Label text="(just use your mouse to drag the wire from one connector to another)"
 			fontSize="14" color="0xffffff"/>
 	</mx:VBox>
@@ -24,7 +24,7 @@
 	<flextoolbox:InputWireJack id="videoInput" horizontalCenter="-90" verticalCenter="130"
 		acceptedDataFormat="video" dataChange="videoInputDataChangeHandler()"/>
 	
-	<!-- we don't need a special control for the video device -->
+	<!-- the video device is just an image, not a whole component like the TV -->
 	<mx:Image source="@Embed(source='/assets/Skins.swf',symbol='VideoDevice')"
 		horizontalCenter="200" verticalCenter="120"/>
 	

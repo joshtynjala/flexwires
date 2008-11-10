@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:flextoolbox="http://www.flextoolbox.com/2006/mxml"
+	width="100%" height="100%"
+	label="1. OutputWireJack and InputWireJack">
+	
+	<!--
+		These containers put colored boundries under the input and output
+		groupings to improve the user experience. I don't like using containers
+		this way, but FXG isn't available yet.
+	-->
+	<mx:Container backgroundColor="0xeeccff"
+		x="{outputContainer.x}" y="{outputContainer.y}"
+		width="{outputContainer.width}" height="{outputContainer.height}"/>
+	<mx:Container backgroundColor="0xffeecc"
+		x="{inputContainer.x}" y="{inputContainer.y}"
+		width="{inputContainer.width}" height="{inputContainer.height}"/>
+	
+	<!-- 
+		By default, the main IWireManager is placed on the PopUpManager. Since
+		these wire jacks are inside an accordion, the wires will still show
+		when a different accordion page is visible.
+		
+		A WireSurface allows us to keep wires inside a parent container rather
+		than above the entire application.
+		
+		Additionally, we're also putting the WireSurface below the wire jacks
+		so that the wire jacks stay interactive when wires are connected. It's
+		worth noting that OutputWireJacks may have multiple connections.
+	-->
+	<flextoolbox:WireSurface id="surface" width="100%" height="100%"/>
+	
+	<!-- the instructions for this section -->
+	<mx:Text width="90%" top="20" horizontalCenter="0">
+		<mx:text>Click and drag the wire from an OutputInputJack on the left to an InputWireJack on the right. Click on a wire to delete the connection.</mx:text>
+	</mx:Text>
+	
+	<!-- OUTPUT WIRE JACKS ARE ON THE TOP -->
+	<mx:HBox id="outputContainer"
+		left="20" top="65" right="20" verticalAlign="middle"
+		paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10">
+	
+		<mx:VBox horizontalAlign="center" width="100%">
+			<!-- this is the source of data for output1 -->
+			<mx:TextInput id="data1" text="Hello World!" width="80"/>
+			
+			<flextoolbox:OutputWireJack id="output1"
+				data="{data1.text}" wireManager="{surface}"/>
+			<!-- notice that we've bound the wireManager property to the "surface"
+				component rather than use the default wire manager. -->
+		</mx:VBox>
+		
+		<mx:Label text="OUTPUTS" width="100%" fontWeight="bold" textAlign="center"/>
+		
+		<mx:VBox horizontalAlign="center" width="100%">
+			<!-- this is the source of data for output2 -->
+			<mx:TextInput id="data2" text="Hola Mundo" width="80"/>
+			
+			<flextoolbox:OutputWireJack id="output2"
+				data="{data2.text}" wireManager="{surface}"/>
+		</mx:VBox>
+	</mx:HBox>
+	
+	<!-- INPUT WIRE JACKS ARE ON THE BOTTOM -->
+	<mx:HBox id="inputContainer"
+		left="20" bottom="65" right="20" verticalAlign="middle"
+		paddingTop="10" paddingRight="10" paddingBottom="10" paddingLeft="10">
+	
+		<mx:VBox horizontalAlign="center" width="100%">
+			<flextoolbox:InputWireJack id="input1" wireManager="{surface}"/>
+			<mx:Label text="Data: {input1.data}"/>
+		</mx:VBox>
+		
+		<mx:Label text="INPUTS" width="100%" fontWeight="bold" textAlign="center"/>
+	
+		<mx:VBox horizontalAlign="center" width="100%">
+			<flextoolbox:InputWireJack id="input2" wireManager="{surface}"/>
+			<mx:Label text="Data: {input2.data}"/>
+		</mx:VBox>
+	</mx:HBox>
+	
+	<!-- more instructions for this section -->
+	<mx:Text width="90%" bottom="20" horizontalCenter="0">
+		<mx:text>Notice that you can connect both InputWireJacks to the same OutputWireJack, but an InputWireJack may only have one connection.</mx:text>
+	</mx:Text>
+</mx:Canvas>

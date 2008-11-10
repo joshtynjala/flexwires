@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:toolbox="com.flextoolbox.controls.*"
+	layout="absolute" xmlns:local="*">
+
+	<mx:VBox id="header" top="20" x="{sections.x}" verticalGap="-4">
+		<mx:Label text="Introduction to Wire Jacks" color="0xffffff" fontSize="18"/>
+		<mx:Label text="A collection of Wires Library examples"/>
+	</mx:VBox>
+	
+	<mx:Accordion id="sections" width="500" height="400"
+		top="80" horizontalCenter="0">
+		
+		<local:OutputAndInput/> 	
+		<local:DataFormats/>
+		<local:AdvancedCustomization/>
+	
+	</mx:Accordion>
+	
+	<mx:LinkButton bottom="20" right="20" label="Homepage" click="linkClickHandler(event)"/>
+
+	<mx:Script>
+		<![CDATA[
+			import flash.net.navigateToURL;
+			protected function linkClickHandler(event:MouseEvent):void
+			{
+				navigateToURL(new URLRequest("http://code.google.com/p/flexwires/"), "_self");
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Style>
+		AccordionHeader
+		{
+			fontSize: 12;
+		}
+		
+		.myCustomizedJack
+		{
+			skin: ClassReference("com.flextoolbox.jacksIntro.skins.CustomWireJackSkin");
+			
+			/* The source code for this drag image skin is included with the
+				Wires Library. It was not made specifically for this example. */
+			dragImage: ClassReference("com.flextoolbox.skins.halo.WireJackArrowDragImage");
+		}
+		
+		.myCustomizedWireSurface
+		{
+			wireSkin: ClassReference("com.flextoolbox.jacksIntro.skins.CustomWireRenderer");
+		}
+	</mx:Style>
+	
+</mx:Application>

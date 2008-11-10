@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Introduction to Jacks Example" default="build">
+
+	<property file="../../sdk.properties"/>
+	
+	<!-- 
+	These property values are only used for local builds.
+	The main build script will override them for a full build.
+	-->
+	<property name="output" location="${basedir}/output"/>
+	<property name="libs" location="../../output/flexwires/build"/>
+	
+	<target name="build" depends="prepare,build-app,cleanup"/>
+	
+	<target name="prepare">
+		<!-- copy the files required for building to the output directory -->
+		<copy overwrite="true" todir="${output}">
+			<fileset dir="${basedir}">
+			
+				<!-- main source files -->
+				<include name="IntroductionToJacks.mxml"/>
+				<include name="OutputAndInput.mxml"/>
+				<include name="DataFormats.mxml"/>
+				<include name="AdvancedCustomization.mxml"/>
+				<include name="com/flextoolbox/jacksIntro/skins/CustomWireJackSkin.as"/>
+				<include name="com/flextoolbox/jacksIntro/skins/CustomWireRenderer.as"/>
+				<include name="com/joshtynjala/utils/GraphicsUtil.as"/>
+				<include name="com/yahoo/astra/utils/DynamicRegistration.as"/>
+				<include name="com/yahoo/astra/utils/NumberUtil.as"/>
+				<include name="ws/tink/flex/skins/SpriteProgrammaticSkin.as"/>
+				
+				<!-- supporting files -->
+				<include name="IntroductionToJacks.html"/>
+				<include name="playerProductInstall.swf"/>
+				<include name="scripts/swfobject.js"/>				
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="build-app">
+		<!--
+		Builds the example swf. Notice that we're building from
+		the files in the output directory rather than in the base.
+		We don't want extra build clutter left behind.
+		-->
+		<exec executable="${mxmlc}" failonerror="true">
+			<arg line="--library-path+='${libs}'"/>
+			<arg line="--output '${output}/IntroductionToJacks.swf'"/>
+			<arg line="'${output}/IntroductionToJacks.mxml'"/>
+		</exec>
+	</target>
+	
+	<target name="cleanup">
+		<!-- does nothing at the moment -->
+	</target>
+</project>
