@@ -42,6 +42,7 @@
 			<arg line="--namespace ${library.mxmlNamespace} manifest.xml"/>
 			<arg line="--source-path '${source.output}'"/>
 			<arg line="--include-namespaces ${library.mxmlNamespace}"/>
+			<arg line="--include-classes+='com.flextoolbox.skins.halo.WireJackArrowDragImage'"/>
 			<arg line="--external-library-path+='${flexsdk.lib}'"/>
 			<arg line="--output '${build.output}/${library.shortName}.swc'"/>
 	    </exec>
@@ -52,14 +53,20 @@
 			<arg line="--source-path '${source.output}'"/>
 			<arg line="--doc-sources '${source.output}'"/>
 			<arg line="--footer 'Copyright ${date.year} Josh Tynjala. All rights reserved.'"/>
-			<arg line="--main-title '${library.name} by Josh Tynjala'"/>
-			<arg line="--window-title '${library.name} by Josh Tynjala'"/>
+			<arg line="--main-title '${library.name} Documentation'"/>
+			<arg line="--window-title '${library.name} Documentation'"/>
 			<arg line="--templates-path '${docs.template}'"/>
 			<arg line="--output '${docs.output}'"/>
 		</exec>
 	</target>
 	
 	<target name="build-examples" depends="build-lib">
+		<ant antfile="${examples}/GettingStarted/build.xml" target="build">
+			<property name="basedir" value="${examples}/GettingStarted"/>
+			<property name="output" value="${examples.output}/GettingStarted"/>
+			<property name="libs" value="${build.output}"/>
+		</ant>
+		
 		<ant antfile="${examples}/IntroductionToJacks/build.xml" target="build">
 			<property name="basedir" value="${examples}/IntroductionToJacks"/>
 			<property name="output" value="${examples.output}/IntroductionToJacks"/>
