@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:flextoolbox="http://www.flextoolbox.com/2006/mxml"
+	layout="absolute">
+	
+	<!--
+		See the GettingStarted tutorial for more detailed information:
+		http://code.google.com/p/flexwires/wiki/GettingStarted
+	-->
+	
+	<mx:Label text="Getting Started" top="20" right="20"
+		color="0xffffff" fontSize="14"/>
+	
+	<mx:Label top="18" left="40" text="Output: {output.data}"/> 
+	<flextoolbox:OutputWireJack id="output" top="20" left="20"
+		connectionAngle="270" data="Hello World!"/>
+	<!-- setting connectionAngle helps us ensure that the
+		data label isn't covered by a wire -->
+	
+	<mx:Label bottom="16" right="40" text="Input: {input.data}"/>
+	<flextoolbox:InputWireJack id="input" bottom="20" right="20"
+		connectionAngle="90"/>
+	<!-- note that we don't set the data property on the InputWireJack.
+		Instead, the data will come from the OutputWireJack when the
+		two jacks are connected by a wire -->
+	
+</mx:Application>
