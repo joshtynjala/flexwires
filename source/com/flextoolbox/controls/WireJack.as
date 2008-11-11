@@ -464,7 +464,7 @@ package com.flextoolbox.controls
 		 * @private
 		 * The jack's skin.
 		 */
-		protected var skin:DisplayObject;
+		protected var backgroundSkin:DisplayObject;
 		
 	//--------------------------------------
 	//  Public Methods
@@ -542,6 +542,21 @@ package com.flextoolbox.controls
 				this.ignoredJacks.indexOf(jack) < 0;
 		}
 		
+		/**
+		 * @private
+		 */
+		override public function styleChanged(styleProp:String):void
+		{
+			super.styleChanged(styleProp);
+			
+			var allStyles:Boolean = !styleProp || styleProp == "styleName";
+			
+			if(allStyles || styleProp == "skin")
+			{
+				this.invalidateProperties();
+			}
+		}
+		
 	//--------------------------------------
 	//  Protected Methods
 	//--------------------------------------
@@ -562,15 +577,15 @@ package com.flextoolbox.controls
 		{
 			super.measure();
 			
-			if(this.skin is IFlexDisplayObject)
+			if(this.backgroundSkin is IFlexDisplayObject)
 			{
-				this.measuredWidth = IFlexDisplayObject(this.skin).measuredWidth;
-				this.measuredHeight = IFlexDisplayObject(this.skin).measuredHeight;
+				this.measuredWidth = IFlexDisplayObject(this.backgroundSkin).measuredWidth;
+				this.measuredHeight = IFlexDisplayObject(this.backgroundSkin).measuredHeight;
 			}
 			else
 			{
-				this.measuredWidth = this.skin.width;
-				this.measuredHeight = this.skin.height;
+				this.measuredWidth = this.backgroundSkin.width;
+				this.measuredHeight = this.backgroundSkin.height;
 			}
 		}
 		
@@ -582,20 +597,20 @@ package com.flextoolbox.controls
 			super.updateDisplayList(unscaledWidth, unscaledHeight);
 			
 			var sizeSkin:Boolean = false;
-			if(this.skin is IInvalidating)
+			if(this.backgroundSkin is IInvalidating)
 			{
-				IInvalidating(this.skin).validateNow();
+				IInvalidating(this.backgroundSkin).validateNow();
 				sizeSkin = true;
 			}
-			else if(this.skin is IProgrammaticSkin)
+			else if(this.backgroundSkin is IProgrammaticSkin)
 			{
-				IProgrammaticSkin(this.skin).validateDisplayList();
+				IProgrammaticSkin(this.backgroundSkin).validateDisplayList();
 				sizeSkin = true;
 			}
 			
 			if(sizeSkin)
 			{
-				IFlexDisplayObject(this.skin).setActualSize(unscaledWidth, unscaledHeight);
+				IFlexDisplayObject(this.backgroundSkin).setActualSize(unscaledWidth, unscaledHeight);
 			}
 		}
 		
@@ -605,10 +620,10 @@ package com.flextoolbox.controls
 		 */
 		protected function viewSkin():void
 		{
-			if(this.skin)
+			if(this.backgroundSkin)
 			{
-				this.removeChild(this.skin);
-				this.skin = null;
+				this.removeChild(this.backgroundSkin);
+				this.backgroundSkin = null;
 			}
 			
 			var skinState:String;
@@ -668,21 +683,21 @@ package com.flextoolbox.controls
 		{
 			var skinClass:Object = this.getStyle(skinName);
 			
-			this.skin = new skinClass();
+			this.backgroundSkin = new skinClass();
 			
-			if(this.skin is ISimpleStyleClient)
+			if(this.backgroundSkin is ISimpleStyleClient)
 			{
-				ISimpleStyleClient(this.skin).styleName = this;
+				ISimpleStyleClient(this.backgroundSkin).styleName = this;
 			}
 			
-			if(this.skin is IUIComponent)
+			if(this.backgroundSkin is IUIComponent)
 			{
-				IUIComponent(this.skin).enabled = enabled;
+				IUIComponent(this.backgroundSkin).enabled = enabled;
 			}
 			
-			this.skin.name = state;
+			this.backgroundSkin.name = state;
 			
-			this.addChild(DisplayObject(this.skin));
+			this.addChild(DisplayObject(this.backgroundSkin));
 		}
 		
 		/**

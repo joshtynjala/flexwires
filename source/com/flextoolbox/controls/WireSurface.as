@@ -24,12 +24,27 @@
 
 package com.flextoolbox.controls
 {
+	import com.flextoolbox.controls.wireClasses.DefaultWireRenderer;
 	import com.flextoolbox.events.WireManagerEvent;
 	import com.flextoolbox.managers.IWireManager;
 	import com.flextoolbox.managers.WireManager;
 	
+	import mx.core.ClassFactory;
 	import mx.core.IFactory;
 	import mx.core.UIComponent;
+	import mx.styles.CSSStyleDeclaration;
+	import mx.styles.StyleManager;
+	
+	[Exclude("wireRenderer")]
+	
+	//--------------------------------------
+	//  Styles
+	//--------------------------------------
+	
+	/**
+	 * The renderer class used by this WireSurface.
+	 */
+	[Style(name="wireSkin", type="Class")]
 	
 	//--------------------------------------
 	//  Events
@@ -81,6 +96,30 @@ package com.flextoolbox.controls
 	 */
 	public class WireSurface extends UIComponent implements IWireManager
 	{
+	//--------------------------------------
+	//  Static Methods
+	//--------------------------------------
+		
+		/**
+		 * @private
+		 * Sets the default styles for the WireSurface
+		 */
+		private static function initializeStyles():void
+		{
+			var styles:CSSStyleDeclaration = StyleManager.getStyleDeclaration("WireSurface");
+			if(!styles)
+			{
+				styles = new CSSStyleDeclaration();
+			}
+			
+			styles.defaultFactory = function():void
+			{
+				this.wireSkin = DefaultWireRenderer;
+			}
+			
+			StyleManager.setStyleDeclaration("WireSurface", styles, false);
+		}
+		initializeStyles();
 		
 	//--------------------------------------
 	//  Constructor
@@ -177,6 +216,17 @@ package com.flextoolbox.controls
 		public function disconnect(startJack:WireJack, endJack:WireJack):void
 		{
 			this.manager.disconnect(startJack, endJack);
+		}
+		
+		override public function styleChanged(styleProp:String):void
+		{
+			var allStyles:Boolean = !styleProp || styleProp == "styleName";
+			
+			if(allStyles || styleProp == "wireSkin")
+			{
+				var wireSkin:Class = this.getStyle("wireSkin");
+				this.wireRenderer = new ClassFactory(wireSkin);
+			}
 		}
 		
 	//--------------------------------------
