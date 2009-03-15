@@ -24,6 +24,9 @@
 
 package com.flextoolbox.controls
 {
+
+	[Exclude(name="acceptedDataFormat", kind="property")]
+
 	/**
 	 * A specialized WireJack designed to send data to compatible input jacks.
 	 * 

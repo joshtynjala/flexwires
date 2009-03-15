@@ -40,18 +40,18 @@ choppingblock.obj = {};
 
 function checkObj () {
 	//console.log("youTubeLoader.js : checkObj");
-	if (SWFID) {
+	if (choppingblock.SWFID) {
 		createObj();
 		return true;
 	} else{
-		alert("YouTubeLoader: In order to call methods within a swf, you must first set the variable \"SWFID\"!");
+		alert("YouTubeLoader: In order to call methods within a swf, you must first set the variable \"choppingblock.SWFID\"!");
 		return false;
 	}
 }
 
 function createObj () {
 	//console.log("youTubeLoader.js : createObj");
-	choppingblock.obj = document.getElementById(SWFID);
+	choppingblock.obj = document.getElementById(choppingblock.SWFID);
 }
 
 //------------------------------------

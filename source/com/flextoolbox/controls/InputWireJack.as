@@ -28,6 +28,8 @@ package com.flextoolbox.controls
 	
 	import mx.events.FlexEvent;
 	
+	[Exclude(name="dataFormat", kind="property")]
+	
 	/**
 	 * A specialized WireJack designed to receive data from compatible output
 	 * jacks. It may only have one connection.
@@ -155,7 +157,7 @@ package com.flextoolbox.controls
 		 */
 		override public function set dataFormat(value:String):void
 		{
-			throw InputWireJack.SET_DATA_FORMAT_ERROR;
+			throw new Error(InputWireJack.SET_DATA_FORMAT_ERROR);
 		}
 		
 		/**

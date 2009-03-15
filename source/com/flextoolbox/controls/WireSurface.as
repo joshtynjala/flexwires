@@ -218,6 +218,9 @@ package com.flextoolbox.controls
 			this.manager.disconnect(startJack, endJack);
 		}
 		
+		/**
+		 * @private
+		 */
 		override public function styleChanged(styleProp:String):void
 		{
 			var allStyles:Boolean = !styleProp || styleProp == "styleName";
