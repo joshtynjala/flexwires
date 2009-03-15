@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2008 Josh Tynjala
+//  Copyright (c) 2009 Josh Tynjala
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to 
@@ -91,6 +91,11 @@ package com.flextoolbox.managers
 		 * @private
 		 */
 		function set wireRenderer(value:IFactory):void;
+		
+		/**
+		 * Indicates whether the user is trying to make a wire connection.
+		 */
+		function get hasActiveConnectionRequest():Boolean;
 		
 	//--------------------------------------
 	//  Methods

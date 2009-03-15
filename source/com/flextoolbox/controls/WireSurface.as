@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2008 Josh Tynjala
+//  Copyright (c) 2009 Josh Tynjala
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to 
@@ -164,6 +164,14 @@ package com.flextoolbox.controls
 		public function set wireRenderer(value:IFactory):void
 		{
 			this.manager.wireRenderer = value;
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function get hasActiveConnectionRequest():Boolean
+		{
+			return this.manager.hasActiveConnectionRequest;
 		}
 		
 	//--------------------------------------

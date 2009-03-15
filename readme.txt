@@ -26,5 +26,11 @@ Author's Blog:
 Release Notes:
 ---------------------------------------------------------------------------------
 
+??/??/2008 - 1.1.0
+   * Added "hasActiveConnectionRequest" to IWireManager and implementations.
+   * Added "clickToDrag" static property to WireJack class as an alternative
+     that does not require holding the mouse button down to connect wires.
+   * Fixed runtime error on drag in AIR. Nothing displays, but it works now.
+   
 11/11/2008 - 1.0.0
    * Initial Release for Flex 3.2.0

@@ -31,6 +31,7 @@ package com.flextoolbox.managers
 	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.errors.IllegalOperationError;
 	import flash.events.EventDispatcher;
 	
 	import mx.core.Application;
@@ -39,8 +40,6 @@ package com.flextoolbox.managers
 	import mx.core.IUIComponent;
 	import mx.core.UIComponent;
 	import mx.managers.PopUpManager;
-	import mx.styles.CSSStyleDeclaration;
-	import mx.styles.StyleManager;
 	
 	//--------------------------------------
 	//  Events
@@ -166,16 +165,36 @@ package com.flextoolbox.managers
 		 */
 		protected var connecting:Boolean = false;
 		
+		/**
+		 * @private
+		 * Storage for the wireRenderer property.
+		 */
 		private var _wireRenderer:IFactory = new ClassFactory(DefaultWireRenderer);
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function get wireRenderer():IFactory
 		{
 			return this._wireRenderer;
 		}
 		
+		/**
+		 * @private
+		 */
 		public function set wireRenderer(value:IFactory):void
 		{
 			this._wireRenderer = value;
+		}
+		
+		private var _hasActiveConnectionRequest:Boolean = false;
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function get hasActiveConnectionRequest():Boolean
+		{
+			return this._hasActiveConnectionRequest;
 		}
 		
 	//--------------------------------------
@@ -209,6 +228,11 @@ package com.flextoolbox.managers
 		 */
 		public function beginConnectionRequest(jack:WireJack):void
 		{
+			if(this._hasActiveConnectionRequest)
+			{
+				throw new IllegalOperationError("Cannot have more than one active connection request at a time.");
+			}
+			this._hasActiveConnectionRequest = true;
 			var begin:WireManagerEvent = new WireManagerEvent(WireManagerEvent.BEGIN_CONNECTION_REQUEST, jack);
 			this.dispatchEvent(begin);
 		}
@@ -218,6 +242,7 @@ package com.flextoolbox.managers
 		 */
 		public function endConnectionRequest(jack:WireJack):void
 		{
+			this._hasActiveConnectionRequest = false;
 			var end:WireManagerEvent = new WireManagerEvent(WireManagerEvent.END_CONNNECTION_REQUEST, jack);
 			this.dispatchEvent(end);
 		}

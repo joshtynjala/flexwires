@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2008 Josh Tynjala
+//  Copyright (c) 2009 Josh Tynjala
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to 
@@ -218,6 +218,10 @@ package com.flextoolbox.skins.halo
 			this.stage.addEventListener(MouseEvent.MOUSE_UP, stageMouseUpHandler, false, 0, true);
 		}
 		
+		/**
+		 * @private
+		 * If removed from stage, then we need to finish immediately.
+		 */
 		private function removedFromStageHandler(event:Event):void
 		{
 			this.finish();

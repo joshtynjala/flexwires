@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2008 Josh Tynjala
+//  Copyright (c) 2009 Josh Tynjala
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to 
@@ -206,6 +206,21 @@ package com.flextoolbox.skins.halo
 		}
 		
 	//--------------------------------------
+	//  Private Methods
+	//--------------------------------------
+		
+		private function finish():void
+		{
+			this.removeEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
+			this.stage.removeEventListener(MouseEvent.MOUSE_MOVE, stageMouseMoveHandler);
+			this.stage.removeEventListener(MouseEvent.MOUSE_UP, stageMouseUpHandler);
+			
+			this.done = true;
+			this.invalidateDisplayList();
+			this.validateNow();
+		}
+		
+	//--------------------------------------
 	//  Private Event Handlers
 	//--------------------------------------
 		
@@ -217,8 +232,18 @@ package com.flextoolbox.skins.halo
 		private function addedToStageHandler(event:Event):void
 		{
 			this.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
+			this.addEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
 			this.stage.addEventListener(MouseEvent.MOUSE_MOVE, stageMouseMoveHandler, false, 0, true);
 			this.stage.addEventListener(MouseEvent.MOUSE_UP, stageMouseUpHandler, false, 0, true);
+		}
+		
+		/**
+		 * @private
+		 * If removed from stage, then we need to finish immediately.
+		 */
+		private function removedFromStageHandler(event:Event):void
+		{
+			this.finish();
 		}
 		
 		/**
@@ -227,12 +252,7 @@ package com.flextoolbox.skins.halo
 		 */
 		private function stageMouseUpHandler(event:MouseEvent):void
 		{
-			this.stage.removeEventListener(MouseEvent.MOUSE_MOVE, stageMouseMoveHandler);
-			this.stage.removeEventListener(MouseEvent.MOUSE_UP, stageMouseUpHandler);
-			
-			this.done = true;
-			this.invalidateDisplayList();
-			this.validateNow();
+			this.finish();
 		}
 		
 		/**
