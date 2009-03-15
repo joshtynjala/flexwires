@@ -26,6 +26,7 @@ package com.flextoolbox.skins.halo
 {
 	import com.flextoolbox.controls.WireJack;
 	import com.flextoolbox.controls.wireClasses.IWireRenderer;
+	import com.flextoolbox.managers.WireManager;
 	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
@@ -37,8 +38,6 @@ package com.flextoolbox.skins.halo
 	import mx.core.UIComponent;
 	import mx.managers.PopUpManager;
 	import mx.managers.dragClasses.DragProxy;
-	import mx.styles.CSSStyleDeclaration;
-	import mx.styles.StyleManager;
 	
 	/**
 	 * A drag image to be used by the WireJack to display an wire connecting
@@ -132,12 +131,23 @@ package com.flextoolbox.skins.halo
 			
 			if(!this.wire)
 			{
-				var proxy:DragProxy = DragProxy(this.parent);
-				//the drag initiator must be a WireJack.
-				var startJack:WireJack = WireJack(proxy.dragInitiator);
+				var wireRenderer:IFactory;
+				var proxy:DragProxy = this.parent as DragProxy;
+				if(proxy)
+				{
+					//the drag initiator must be a WireJack.
+					var startJack:WireJack = WireJack(proxy.dragInitiator);
+					wireRenderer = startJack.wireManager.wireRenderer;
+				}
+				else
+				{
+					//in the AIR version of the framework, we don't have a
+					//dragproxy. drag images go directly on the system manager.
+					//and we can't figure out who the initiator is!
+					wireRenderer = WireManager.defaultWireManager.wireRenderer;
+				}
 				
-				//use the wireRenderer factory from the startJack's manager.
-				var wireRenderer:IFactory = startJack.wireManager.wireRenderer;
+				//use the wireRenderer factory from the wire manager
 				this.wire = wireRenderer.newInstance();
 				InteractiveObject(this.wire).mouseEnabled = DisplayObjectContainer(this.wire).mouseChildren = false;
 				PopUpManager.addPopUp(this.wire, DisplayObject(this.parentApplication));
@@ -177,6 +187,21 @@ package com.flextoolbox.skins.halo
 		}
 		
 	//--------------------------------------
+	//  Private Methods
+	//--------------------------------------
+		
+		private function finish():void
+		{
+			this.removeEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
+			this.stage.removeEventListener(MouseEvent.MOUSE_MOVE, stageMouseMoveHandler);
+			this.stage.removeEventListener(MouseEvent.MOUSE_UP, stageMouseUpHandler);
+			
+			this.done = true;
+			this.invalidateDisplayList();
+			this.validateNow();
+		}
+		
+	//--------------------------------------
 	//  Private Event Handlers
 	//--------------------------------------
 		
@@ -188,8 +213,14 @@ package com.flextoolbox.skins.halo
 		private function addedToStageHandler(event:Event):void
 		{
 			this.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
+			this.addEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
 			this.stage.addEventListener(MouseEvent.MOUSE_MOVE, stageMouseMoveHandler, false, 0, true);
 			this.stage.addEventListener(MouseEvent.MOUSE_UP, stageMouseUpHandler, false, 0, true);
+		}
+		
+		private function removedFromStageHandler(event:Event):void
+		{
+			this.finish();
 		}
 		
 		/**
@@ -198,12 +229,7 @@ package com.flextoolbox.skins.halo
 		 */
 		private function stageMouseUpHandler(event:MouseEvent):void
 		{
-			this.stage.removeEventListener(MouseEvent.MOUSE_MOVE, stageMouseMoveHandler);
-			this.stage.removeEventListener(MouseEvent.MOUSE_UP, stageMouseUpHandler);
-			
-			this.done = true;
-			this.invalidateDisplayList();
-			this.validateNow();
+			this.finish();
 		}
 		
 		/**

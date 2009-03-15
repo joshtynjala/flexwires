@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2008 Josh Tynjala
+//  Copyright (c) 2009 Josh Tynjala
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to 
@@ -40,10 +40,10 @@ package com.flextoolbox.utils
 		 * Creates a new instance of an object. Supports Class, Function, a
 		 * fully-qualified class name String, or mx.core.IFactory.
 		 * 
-		 * @param type			The type to instantiate
-		 * @param styleName		The styleName to set if the instantiated object supports styles.
+		 * @param type				The type to instantiate
+		 * @param styleNameValue	The value to pass to the instance's styleName property if the instance supports styles.
 		 */
-		public static function newInstance(type:Object, styleName:String = null):Object
+		public static function newInstance(type:Object, styleNameValue:String = null):Object
 		{	
 			var instance:Object = null;
 			
@@ -76,7 +76,7 @@ package com.flextoolbox.utils
 			//if the new instance supports styles, set the styleName property.
 			if(instance is ISimpleStyleClient)
 			{
-				ISimpleStyleClient(instance).styleName = styleName;
+				ISimpleStyleClient(instance).styleName = styleNameValue;
 			}
 			
 			return instance;

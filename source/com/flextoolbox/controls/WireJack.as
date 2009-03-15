@@ -30,6 +30,7 @@ package com.flextoolbox.controls
 	import com.flextoolbox.managers.WireManager;
 	import com.flextoolbox.skins.halo.WireJackSkin;
 	import com.flextoolbox.skins.halo.WireJackWireDragImage;
+	import com.flextoolbox.utils.TheInstantiator;
 	
 	import flash.display.DisplayObject;
 	import flash.events.Event;
@@ -131,7 +132,7 @@ package com.flextoolbox.controls
 		
 		/**
 		 * @private
-		 * Sets the default styles for the WireManager
+		 * Sets the default styles for the WireJack
 		 */
 		private static function initializeStyles():void
 		{
@@ -752,7 +753,7 @@ package com.flextoolbox.controls
 			source.addData(this, WIRE_JACK_DRAG_FORMAT);
 			
 			var dragImageType:Object = this.getStyle("dragImage");
-			var image:IFlexDisplayObject = new dragImageType();
+			var image:IFlexDisplayObject = TheInstantiator.newInstance(dragImageType) as IFlexDisplayObject;
 			if(image is ISimpleStyleClient)
 			{
 				ISimpleStyleClient(image).styleName = this.getStyle("dragImageStyleName");
