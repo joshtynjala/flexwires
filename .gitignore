@@ -1,0 +1,11 @@
+bin-debug
+bin-release
+output
+html-template
+.settings
+.actionScriptProperties
+.flexLibProperties
+.project
+*.swf
+*.swc
+*.zip
