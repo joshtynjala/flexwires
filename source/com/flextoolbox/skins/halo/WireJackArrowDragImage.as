@@ -69,35 +69,7 @@ package com.flextoolbox.skins.halo
 	 * @author Josh Tynjala (joshblog.net)
 	 */
 	public class WireJackArrowDragImage extends UIComponent
-	{
-		
-	//--------------------------------------
-	//  Static Methods
-	//--------------------------------------
-		
-		/**
-		 * @private
-		 * Sets the default styles for the WireManager
-		 */
-		private static function initializeStyles():void
-		{
-			var styles:CSSStyleDeclaration = StyleManager.getStyleDeclaration("WireJackArrowDragImage");
-			if(!styles)
-			{
-				styles = new CSSStyleDeclaration();
-			}
-			
-			styles.defaultFactory = function():void
-			{
-				this.headSize = 15;
-				this.shaftThickness = 5;
-				this.originRadius = 4;
-			}
-			
-			StyleManager.setStyleDeclaration("WireJackArrowDragImage", styles, false);
-		}
-		initializeStyles();
-		
+	{	
 		
 	//--------------------------------------
 	//  Constructor

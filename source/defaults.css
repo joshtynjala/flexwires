@@ -1,0 +1,30 @@
+@namespace "http://www.flextoolbox.com/2006/mxml";
+
+WireJack
+{
+	disabledIconColor: #999999;
+	dragImage: ClassReference("com.flextoolbox.skins.halo.WireJackWireDragImage");
+	iconColor: #666666;
+	skin: ClassReference("com.flextoolbox.skins.halo.WireJackSkin");
+}
+
+WireSurface
+{
+	wireSkin: ClassReference("com.flextoolbox.controls.wireClasses.DefaultWireRenderer");
+}
+
+DefaultWireRenderer
+{
+	fillColor: #cccccc;
+	borderColor: #919999;
+	thickness: 6;
+	bezierPrecision: 150;
+	disconnectCursorSkin: ClassReference("com.flextoolbox.skins.cursor.DisconnectCursor");
+}
+
+WireJackArrowDragImage
+{
+	headSize: 15;
+	shaftThickness: 5;
+	originRadius: 4;
+}

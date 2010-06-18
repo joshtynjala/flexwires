@@ -24,7 +24,6 @@
 
 package com.flextoolbox.controls.wireClasses
 {
-	import com.flextoolbox.skins.cursor.DisconnectCursor;
 	import com.joshtynjala.utils.BezierUtil;
 	import com.yahoo.astra.utils.DisplayObjectUtil;
 	import com.yahoo.astra.utils.GeomUtil;
@@ -53,35 +52,6 @@ package com.flextoolbox.controls.wireClasses
 	 */
 	public class DefaultWireRenderer extends BaseWireRenderer
 	{
-		
-	//--------------------------------------
-	//  Static Methods
-	//--------------------------------------
-		
-		/**
-		 * @private
-		 * Sets the default styles for the WireManager
-		 */
-		private static function initializeStyles():void
-		{
-			var styles:CSSStyleDeclaration = StyleManager.getStyleDeclaration("DefaultWireRenderer");
-			if(!styles)
-			{
-				styles = new CSSStyleDeclaration();
-			}
-			
-			styles.defaultFactory = function():void
-			{
-				this.fillColor = 0xcccccc;
-				this.borderColor = 0x919999;
-				this.thickness = 6;
-				this.bezierPrecision = 150;
-				this.disconnectCursorSkin = DisconnectCursor;
-			}
-			
-			StyleManager.setStyleDeclaration("DefaultWireRenderer", styles, false);
-		}
-		initializeStyles();
 		
 	//--------------------------------------
 	//  Constructor

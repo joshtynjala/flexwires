@@ -24,7 +24,6 @@
 
 package com.flextoolbox.controls
 {
-	import com.flextoolbox.controls.wireClasses.DefaultWireRenderer;
 	import com.flextoolbox.events.WireManagerEvent;
 	import com.flextoolbox.managers.IWireManager;
 	import com.flextoolbox.managers.WireManager;
@@ -96,30 +95,6 @@ package com.flextoolbox.controls
 	 */
 	public class WireSurface extends UIComponent implements IWireManager
 	{
-	//--------------------------------------
-	//  Static Methods
-	//--------------------------------------
-		
-		/**
-		 * @private
-		 * Sets the default styles for the WireSurface
-		 */
-		private static function initializeStyles():void
-		{
-			var styles:CSSStyleDeclaration = StyleManager.getStyleDeclaration("WireSurface");
-			if(!styles)
-			{
-				styles = new CSSStyleDeclaration();
-			}
-			
-			styles.defaultFactory = function():void
-			{
-				this.wireSkin = DefaultWireRenderer;
-			}
-			
-			StyleManager.setStyleDeclaration("WireSurface", styles, false);
-		}
-		initializeStyles();
 		
 	//--------------------------------------
 	//  Constructor

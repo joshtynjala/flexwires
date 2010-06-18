@@ -28,8 +28,6 @@ package com.flextoolbox.controls
 	import com.flextoolbox.events.WireManagerEvent;
 	import com.flextoolbox.managers.IWireManager;
 	import com.flextoolbox.managers.WireManager;
-	import com.flextoolbox.skins.halo.WireJackSkin;
-	import com.flextoolbox.skins.halo.WireJackWireDragImage;
 	import com.flextoolbox.utils.TheInstantiator;
 	
 	import flash.display.DisplayObject;
@@ -144,34 +142,6 @@ package com.flextoolbox.controls
 		 * Thrown when a jack tries to disconnect from a jack to which it isn't connected.
 		 */
 		private static const JACKS_NOT_CONNECTED_ERROR:String = "Cannot delete connection if jacks aren't connected.";
-		
-	//--------------------------------------
-	//  Static Methods
-	//--------------------------------------
-		
-		/**
-		 * @private
-		 * Sets the default styles for the WireJack
-		 */
-		private static function initializeStyles():void
-		{
-			var styles:CSSStyleDeclaration = StyleManager.getStyleDeclaration("WireJack");
-			if(!styles)
-			{
-				styles = new CSSStyleDeclaration();
-			}
-			
-			styles.defaultFactory = function():void
-			{
-				this.disabledIconColor = 0x999999;
-				this.dragImage = WireJackWireDragImage;
-				this.iconColor = 0x666666;
-				this.skin = WireJackSkin;
-			}
-			
-			StyleManager.setStyleDeclaration("WireJack", styles, false);
-		}
-		initializeStyles();
 		
 	//--------------------------------------
 	//  Constructor
@@ -782,8 +752,7 @@ package com.flextoolbox.controls
 		}
 		
 		protected function clickHandler(event:MouseEvent):void 
-		{	
-			trace("click!");
+		{
 			if(this.wireManager.hasActiveConnectionRequest || !clickToDrag || this.connectedJacks.length == this.maxConnections || !this.enabled)
 			{
 				return;
@@ -806,7 +775,8 @@ package com.flextoolbox.controls
 			}
 			
 			fakeDragProxy = new DragProxy(this, source);
-			this.systemManager.addChildToSandboxRoot("popUpChildren", fakeDragProxy);
+			
+			this.systemManager["addChildToSandboxRoot"]("popUpChildren", fakeDragProxy);
 			fakeDragProxy.addChild(DisplayObject(dragImage));
 			fakeDragProxy.setActualSize(this.width, this.height);
 			dragImage.setActualSize(this.width, this.height);
@@ -842,7 +812,7 @@ package com.flextoolbox.controls
 		{
 			if(fakeDragProxy)
 			{
-				this.systemManager.removeChildFromSandboxRoot("popUpChildren", fakeDragProxy);
+				this.systemManager["removeChildFromSandboxRoot"]("popUpChildren", fakeDragProxy);
 				fakeDragProxy = null;
 			}
 			

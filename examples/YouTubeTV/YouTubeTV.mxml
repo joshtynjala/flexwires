@@ -34,9 +34,12 @@
 	<flextoolbox:OutputWireJack horizontalCenter="90" verticalCenter="130"
 		dataFormat="audio" data="on"/>
 	
+	<mx:LinkButton bottom="20" right="20" label="powered by flexwires" click="linkClickHandler(event)"/>
+	
 	<mx:Script><![CDATA[
 		import mx.controls.Text;
 		import mx.managers.PopUpManager;
+		import flash.net.navigateToURL;
 	
 		private var _loadingMessage:Text;
 	
@@ -83,10 +86,20 @@
 			var videoOn:Boolean = (this.videoInput.data == "on");
 			this.tv.videoActive = videoOn;
 		}
+		
+		/**
+		 * Load flexwires project page.
+		 */
+		private function linkClickHandler(event:MouseEvent):void
+		{
+			navigateToURL(new URLRequest("http://github.com/joshtynjala/flexwires"), "_self");
+		}
 			
 	]]></mx:Script>
 	
 	<mx:Style>
+		@namespace "http://www.adobe.com/2006/mxml";
+		
 		Application
 		{
 			backgroundColor: #000000;

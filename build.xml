@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="Flex TreeMap" default="build" basedir=".">
+<project name="flexwires" default="build" basedir=".">
 
 	<property file="./sdk.properties"/>
 	<property file="./build.properties"/>
@@ -41,6 +41,7 @@
 	    <exec executable="${compc}" dir="${basedir}" failonerror="true">
 			<arg line="--namespace ${library.mxmlNamespace} manifest.xml"/>
 			<arg line="--source-path '${source.output}'"/>
+			<arg line="--include-stylesheet defaults.css source/defaults.css"/>
 			<arg line="--include-namespaces ${library.mxmlNamespace}"/>
 			<arg line="--include-classes+='com.flextoolbox.skins.halo.WireJackArrowDragImage'"/>
 			<arg line="--external-library-path+='${flexsdk.lib}'"/>

@@ -18,19 +18,20 @@
 	
 	</mx:Accordion>
 	
-	<mx:LinkButton bottom="20" right="20" label="Homepage" click="linkClickHandler(event)"/>
+	<mx:LinkButton bottom="20" right="20" label="powered by flexwires" click="linkClickHandler(event)"/>
 
 	<mx:Script>
 		<![CDATA[
 			import flash.net.navigateToURL;
 			protected function linkClickHandler(event:MouseEvent):void
 			{
-				navigateToURL(new URLRequest("http://code.google.com/p/flexwires/"), "_self");
+				navigateToURL(new URLRequest("http://github.com/joshtynjala/flexwires"), "_self");
 			}
 		]]>
 	</mx:Script>
 	
 	<mx:Style>
+		@namespace "http://www.adobe.com/2006/mxml";
 		AccordionHeader
 		{
 			fontSize: 12;
