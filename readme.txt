@@ -14,7 +14,7 @@ Project Page:
    * http://github.com/joshtynjala/flexwires
    
 API Documentation:
-   * http://www.flextoolbox.com/documentation/flexwires/1/index.html
+   * http://www.flextoolbox.com/components/flexwires/1/documentation/index.html
 
 Getting Started:
    * http://wiki.github.com/joshtynjala/flexwires/getting-started
