@@ -842,17 +842,6 @@ package com.flextoolbox.controls
 			this.systemManager.removeEventListener(MouseEvent.MOUSE_UP, connectionEndHandler);
 			this.wireManager.endConnectionRequest(this);
 			
-			if(clickToDrag)
-			{
-				//if we're using clickToDrag, then a click event will follow
-				//this mouseUpEvent. kill it!
-				this.systemManager.addEventListener(MouseEvent.CLICK, function(event:MouseEvent):void
-				{
-					event.currentTarget.removeEventListener(event.type, arguments.callee, true);
-					event.stopImmediatePropagation();
-				}, true);
-			}
-			
 			//note: we don't care if the connection was successful here.
 			//instead, the wire manager will notify us through an event that the
 			//connection was made
