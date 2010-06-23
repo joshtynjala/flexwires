@@ -30,9 +30,9 @@ Release Notes:
    * Added "hasActiveConnectionRequest" to IWireManager and implementations.
    * Added "clickToDrag" static property to WireJack class as an alternative
      that does not require holding the mouse button down to connect wires.
-   * Fixed runtime error on drag in AIR. Nothing displays, but it works now.
-   * Moved default styles to defaults.css.
-   * Minimum version is now Flex 3.5.0. Can be compiled with Flex 4.
+   * Placeholder wire now properly displays while dragging in Adobe AIR.
+   * Moved default styles to defaults.css and updated for Flex 4.
+   * Minimum version is now Flex 3.5.0.
    
 11/11/2008 - 1.0.0
    * Initial Release for Flex 3.2.0

@@ -2,6 +2,7 @@ bin-debug
 bin-release
 output
 html-template
+bash.exe.stackdump
 .settings
 .actionScriptProperties
 .flexLibProperties

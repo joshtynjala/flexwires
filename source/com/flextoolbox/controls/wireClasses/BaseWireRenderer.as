@@ -171,16 +171,16 @@ package com.flextoolbox.controls.wireClasses
 			
 			if(!this.jack1 || !this.jack2)
 			{
-				this.removeEventListener(Event.EXIT_FRAME, exitFrameHandler);
+				this.removeEventListener(Event.ENTER_FRAME, enterFrameHandler);
 				return;
 			}
 			
 			//we have to know when the wire jack moves, or one of its parents
 			//moves. there's no event for that, so we have to check every frame
 			//possible optimization: do it in the manager.
-			if(!this.hasEventListener(Event.EXIT_FRAME))
+			if(!this.hasEventListener(Event.ENTER_FRAME))
 			{
-				this.addEventListener(Event.EXIT_FRAME, exitFrameHandler);
+				this.addEventListener(Event.ENTER_FRAME, enterFrameHandler);
 			}
 			
 			var jackPositions:Array = this.calculateJackPositions();
@@ -215,7 +215,7 @@ package com.flextoolbox.controls.wireClasses
 		 * Every frame, we check to see if one of the jacks has moved. If one
 		 * or the other isn't in the same position, then we need to redraw.
 		 */
-		protected function exitFrameHandler(event:Event):void
+		protected function enterFrameHandler(event:Event):void
 		{
 			if(!this.jack1 || !this.jack2)
 			{
@@ -228,6 +228,9 @@ package com.flextoolbox.controls.wireClasses
 			if(!this._lastJack1Position.equals(start) || !this._lastJack2Position.equals(end))
 			{
 				this.invalidateDisplayList();
+				//we're drawing immediately to avoid the wire jumping after a
+				//short, but noticeable, delay.
+				this.validateNow();
 			}
 		}
 		
