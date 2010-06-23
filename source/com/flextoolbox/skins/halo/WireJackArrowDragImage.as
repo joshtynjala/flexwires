@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2009 Josh Tynjala
+//  Copyright (c) 2010 Josh Tynjala
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to 
@@ -25,6 +25,7 @@
 package com.flextoolbox.skins.halo
 {
 	import com.flextoolbox.controls.WireJack;
+	import com.joshtynjala.utils.PointUtil;
 	import com.yahoo.astra.utils.DisplayObjectUtil;
 	import com.yahoo.astra.utils.DynamicRegistration;
 	import com.yahoo.astra.utils.GeomUtil;
@@ -140,41 +141,40 @@ package com.flextoolbox.skins.halo
 				return;
 			}
 			
-			var terminal:WireJack = WireJack(proxy.dragInitiator);
-			var terminalRadius:Number = Math.min(terminal.width / 2, terminal.height / 2);
+			var startJack:WireJack = WireJack(proxy.dragInitiator);
+			var startJackRadius:Number = Math.min(startJack.width / 2, startJack.height / 2);
 			
-			var start:Point = new Point(terminal.width / 2, terminal.height / 2);
-			start = DisplayObjectUtil.localToLocal(start, terminal, this);
-			
-			var angle:Number = Math.atan2(-start.y, -start.x);
-			var end:Point = new Point(0, 0);
+			var startPosition:Point = new Point(startJack.width / 2, startJack.height / 2);
+			startPosition = startJack.localToGlobal(startPosition);
+			var endPosition:Point = new Point(this.stage.mouseX, this.stage.mouseY);
+			var angle:Number = PointUtil.angle(startPosition, endPosition);
 			
 			var headSize:Number = this.getStyle("headSize");
-			var distance:Number = Point.distance(start, end);
-			if(distance - headSize < terminalRadius)
+			var distance:Number = Point.distance(startPosition, endPosition);
+			if(distance - headSize < startJackRadius)
 			{
-				//ensure that the arrow head doesn't overlap the terminal
-				distance = terminalRadius + headSize;
+				//ensure that the arrow head doesn't overlap the jack
+				distance = startJackRadius + headSize;
 			}
 			distance -= headSize;
-			end = Point.polar(distance, angle).add(start);
+			endPosition = Point.polar(distance, angle).add(startPosition);
 			
 			var originRadius:Number = this.getStyle("originRadius");
 			var shaftThickness:Number = this.getStyle("shaftThickness");
 			var fillColor:uint = this.getStyle("themeColor");
 			this.graphics.beginFill(fillColor);
-			this.graphics.drawCircle(start.x, start.y, originRadius);
+			this.graphics.drawCircle(startPosition.x, startPosition.y, originRadius);
 			this.graphics.endFill();
 			
 			this.graphics.lineStyle(shaftThickness, fillColor, 1, false, LineScaleMode.NORMAL, CapsStyle.SQUARE);
-			this.graphics.moveTo(start.x, start.y);
-			this.graphics.lineTo(end.x, end.y);
+			this.graphics.moveTo(startPosition.x, startPosition.y);
+			this.graphics.lineTo(endPosition.x, endPosition.y);
 			
 			this.arrowhead.rotation = 0;
-			this.arrowhead.x = start.x + distance
-			this.arrowhead.y = start.y - headSize / 2;
+			this.arrowhead.x = endPosition.x;
+			this.arrowhead.y = endPosition.y - headSize / 2;
 			var degrees:Number = GeomUtil.radiansToDegrees(angle);
-			DynamicRegistration.rotate(this.arrowhead, new Point(-distance, headSize / 2), degrees);
+			DynamicRegistration.rotate(this.arrowhead, new Point(0, headSize / 2), degrees);
 		}
 		
 	//--------------------------------------
@@ -184,8 +184,8 @@ package com.flextoolbox.skins.halo
 		private function finish():void
 		{
 			this.removeEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
-			this.stage.removeEventListener(MouseEvent.MOUSE_MOVE, stageMouseMoveHandler);
-			this.stage.removeEventListener(MouseEvent.MOUSE_UP, stageMouseUpHandler);
+			this.stage.removeEventListener(MouseEvent.MOUSE_MOVE, stage_mouseMoveHandler);
+			this.stage.removeEventListener(MouseEvent.MOUSE_UP, stage_mouseUpHandler);
 			
 			this.done = true;
 			this.invalidateDisplayList();
@@ -205,8 +205,8 @@ package com.flextoolbox.skins.halo
 		{
 			this.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 			this.addEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
-			this.stage.addEventListener(MouseEvent.MOUSE_MOVE, stageMouseMoveHandler, false, 0, true);
-			this.stage.addEventListener(MouseEvent.MOUSE_UP, stageMouseUpHandler, false, 0, true);
+			this.stage.addEventListener(MouseEvent.MOUSE_MOVE, stage_mouseMoveHandler, false, 0, true);
+			this.stage.addEventListener(MouseEvent.MOUSE_UP, stage_mouseUpHandler, false, 0, true);
 		}
 		
 		/**
@@ -222,7 +222,7 @@ package com.flextoolbox.skins.halo
 		 * @private
 		 * Once the mouse is released, this operation is done.
 		 */
-		private function stageMouseUpHandler(event:MouseEvent):void
+		private function stage_mouseUpHandler(event:MouseEvent):void
 		{
 			this.finish();
 		}
@@ -231,7 +231,7 @@ package com.flextoolbox.skins.halo
 		 * @private
 		 * While the mouse is moving, we need to be sure we're redrawing.
 		 */
-		private function stageMouseMoveHandler(event:MouseEvent):void
+		private function stage_mouseMoveHandler(event:MouseEvent):void
 		{
 			this.invalidateDisplayList();
 			this.validateNow();

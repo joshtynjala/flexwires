@@ -95,7 +95,7 @@ package com.joshtynjala.utils
 		{
 			var dx:Number = target.x - origin.x;
 			var dy:Number = target.y - origin.y;
-			return Math.atan2(dy, dx) * 180 / Math.PI;
+			return Math.atan2(dy, dx);
 		}
 	}
 }

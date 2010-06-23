@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2009 Josh Tynjala
+//  Copyright (c) 2010 Josh Tynjala
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to 
@@ -26,6 +26,7 @@ package com.flextoolbox.skins.halo
 {
 	import com.flextoolbox.controls.WireJack;
 	import com.flextoolbox.controls.wireClasses.IWireRenderer;
+	import com.flextoolbox.managers.IWireManager;
 	import com.flextoolbox.managers.WireManager;
 	
 	import flash.display.DisplayObject;
@@ -33,10 +34,10 @@ package com.flextoolbox.skins.halo
 	import flash.display.InteractiveObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.ui.Mouse;
 	
 	import mx.core.IFactory;
 	import mx.core.UIComponent;
-	import mx.managers.PopUpManager;
 	import mx.managers.dragClasses.DragProxy;
 	
 	/**
@@ -59,7 +60,6 @@ package com.flextoolbox.skins.halo
 		public function WireJackWireDragImage()
 		{
 			super();
-			
 			this.addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 		}
 		
@@ -125,32 +125,17 @@ package com.flextoolbox.skins.halo
 				//wire can follow the mouse
 				this.fakeEndJack.visible = false;
 				this.fakeEndJack.mouseEnabled = this.fakeEndJack.mouseChildren = false;
-				PopUpManager.addPopUp(this.fakeEndJack, DisplayObject(this.parentApplication));
+				this.addChild(this.fakeEndJack);
 				this.fakeEndJack.move(this.parentApplication.mouseX, this.parentApplication.mouseY);
 			}
 			
 			if(!this.wire)
 			{
-				var wireRenderer:IFactory;
-				var proxy:DragProxy = this.parent as DragProxy;
-				if(proxy)
-				{
-					//the drag initiator must be a WireJack.
-					var startJack:WireJack = WireJack(proxy.dragInitiator);
-					wireRenderer = startJack.wireManager.wireRenderer;
-				}
-				else
-				{
-					//in the AIR version of the framework, we don't have a
-					//dragproxy. drag images go directly on the system manager.
-					//and we can't figure out who the initiator is!
-					wireRenderer = WireManager.defaultWireManager.wireRenderer;
-				}
-				
-				//use the wireRenderer factory from the wire manager
-				this.wire = wireRenderer.newInstance();
+				var dragProxy:DragProxy = DragProxy(this.parent);
+				var startJack:WireJack = WireJack(dragProxy.dragSource.dataForFormat(WireJack.WIRE_JACK_DRAG_FORMAT));
+				this.wire = startJack.wireManager.wireRenderer.newInstance();
 				InteractiveObject(this.wire).mouseEnabled = DisplayObjectContainer(this.wire).mouseChildren = false;
-				PopUpManager.addPopUp(this.wire, DisplayObject(this.parentApplication));
+				this.addChild(DisplayObject(this.wire));
 				
 				this.wire.jack1 = startJack;
 				this.wire.jack2 = fakeEndJack;
@@ -167,13 +152,13 @@ package com.flextoolbox.skins.halo
 			{
 				if(this.fakeEndJack)
 				{
-					PopUpManager.removePopUp(this.fakeEndJack);
+					this.removeChild(this.fakeEndJack);
 					this.fakeEndJack = null;
 				}
 				
 				if(this.wire)
 				{
-					PopUpManager.removePopUp(this.wire);
+					this.removeChild(DisplayObject(this.wire));
 					this.wire.jack1 = null;
 					this.wire.jack2 = null;
 					this.wire = null;
@@ -182,7 +167,7 @@ package com.flextoolbox.skins.halo
 			else
 			{
 				this.fakeEndJack.setActualSize(this.fakeEndJack.getExplicitOrMeasuredWidth(), this.fakeEndJack.getExplicitOrMeasuredHeight());
-				this.fakeEndJack.move(this.parentApplication.mouseX - this.fakeEndJack.width / 2, this.parentApplication.mouseY - this.fakeEndJack.height / 2);
+				this.fakeEndJack.move(this.stage.mouseX - this.fakeEndJack.width / 2, this.stage.mouseY - this.fakeEndJack.height / 2);
 			}
 		}
 		
@@ -193,8 +178,8 @@ package com.flextoolbox.skins.halo
 		private function finish():void
 		{
 			this.removeEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
-			this.stage.removeEventListener(MouseEvent.MOUSE_MOVE, stageMouseMoveHandler);
-			this.stage.removeEventListener(MouseEvent.MOUSE_UP, stageMouseUpHandler);
+			this.stage.removeEventListener(MouseEvent.MOUSE_MOVE, stage_mouseMoveHandler);
+			this.stage.removeEventListener(MouseEvent.MOUSE_UP, stage_mouseUpHandler);
 			
 			this.done = true;
 			this.invalidateDisplayList();
@@ -214,8 +199,8 @@ package com.flextoolbox.skins.halo
 		{
 			this.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 			this.addEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
-			this.stage.addEventListener(MouseEvent.MOUSE_MOVE, stageMouseMoveHandler, false, 0, true);
-			this.stage.addEventListener(MouseEvent.MOUSE_UP, stageMouseUpHandler, false, 0, true);
+			this.stage.addEventListener(MouseEvent.MOUSE_MOVE, stage_mouseMoveHandler, false, 0, true);
+			this.stage.addEventListener(MouseEvent.MOUSE_UP, stage_mouseUpHandler, false, 0, true);
 		}
 		
 		/**
@@ -231,7 +216,7 @@ package com.flextoolbox.skins.halo
 		 * @private
 		 * Once the mouse is released, this operation is done.
 		 */
-		private function stageMouseUpHandler(event:MouseEvent):void
+		private function stage_mouseUpHandler(event:MouseEvent):void
 		{
 			this.finish();
 		}
@@ -241,7 +226,7 @@ package com.flextoolbox.skins.halo
 		 * While the mouse is moving, we need to be sure we're redrawing because
 		 * the fakeEndJack follows the mouse.
 		 */
-		private function stageMouseMoveHandler(event:MouseEvent):void
+		private function stage_mouseMoveHandler(event:MouseEvent):void
 		{
 			this.invalidateDisplayList();
 			this.validateNow();

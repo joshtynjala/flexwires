@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2009 Josh Tynjala
+//  Copyright (c) 2010 Josh Tynjala
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to 
@@ -31,8 +31,10 @@ package com.flextoolbox.controls
 	import com.flextoolbox.utils.TheInstantiator;
 	
 	import flash.display.DisplayObject;
+	import flash.display.InteractiveObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
 	
 	import mx.core.DragSource;
 	import mx.core.IDataRenderer;
@@ -44,6 +46,7 @@ package com.flextoolbox.controls
 	import mx.events.DragEvent;
 	import mx.events.FlexEvent;
 	import mx.managers.DragManager;
+	import mx.managers.PopUpManager;
 	import mx.managers.dragClasses.DragProxy;
 	import mx.styles.CSSStyleDeclaration;
 	import mx.styles.ISimpleStyleClient;
@@ -53,8 +56,19 @@ package com.flextoolbox.controls
 	//  Styles
 	//--------------------------------------
 	
+	/**
+	 * The class used to create the drag image.
+	 */
 	[Style(name="dragImage",type="Class")]
+	
+	/**
+	 * If the dragImage supports styleNames, this value is used.
+	 */
 	[Style(name="dragImageStyleName",type="String")]
+	
+	/**
+	 * The class used for the WireJack's skin.
+	 */
 	[Style(name="skin",type="Class")]
 	
 	//--------------------------------------
@@ -104,7 +118,9 @@ package com.flextoolbox.controls
 		
 		/**
 		 * @private
-		 * The fake proxy for clickToDrag behavior.
+		 * Since we can't use DragManager (it's behavior in AIR causes mouse
+		 * events to go away), we make a fake drag proxy that acts like the
+		 * DragManager.
 		 */
 		protected static var fakeDragProxy:DragProxy;
 		
@@ -123,7 +139,7 @@ package com.flextoolbox.controls
 		/**
 		 * The dragFormat used by wire jacks for drag and drop operations.
 		 */
-		protected static const WIRE_JACK_DRAG_FORMAT:String = "flextoolbox::wireJack";
+		public static const WIRE_JACK_DRAG_FORMAT:String = "flextoolbox::wireJack";
 		
 		/**
 		 * @private
@@ -172,7 +188,7 @@ package com.flextoolbox.controls
 		 */
 		private var _wireManager:IWireManager;
 		
-		[Bindable]
+		[Bindable("wireManagerChange")]
 		/**
 		 * The IWireManager with which this jack is registered.
 		 */
@@ -213,6 +229,7 @@ package com.flextoolbox.controls
 				this._wireManager.addEventListener(WireManagerEvent.CREATE_CONNECTION, wireManagerCreateConnectionHandler, false, 0, true);
 				this._wireManager.addEventListener(WireManagerEvent.DELETE_CONNECTION, wireManagerDeleteConnectionHandler, false, 0, true);
 			}
+			this.dispatchEvent(new Event("wireManagerChange"));
 		}
 		
 		/**
@@ -255,7 +272,7 @@ package com.flextoolbox.controls
 		 */
 		private var _dataFormat:String = null;
 		
-		[Bindable]
+		[Bindable("dataFormatChange")]
 		/**
 		 * The format of the data associated with this jack. Used in combination
 		 * with <code>acceptedDataFormat</code> to control which jacks may be
@@ -275,6 +292,7 @@ package com.flextoolbox.controls
 		public function set dataFormat(value:String):void
 		{
 			this._dataFormat = value;
+			this.dispatchEvent(new Event("dataFormatChange"));
 		}
 		
 		/**
@@ -283,7 +301,7 @@ package com.flextoolbox.controls
 		 */
 		private var _acceptedDataFormat:String = null;
 		
-		[Bindable]
+		[Bindable("acceptedDataFormatChange")]
 		/**
 		 * The <code>dataFormat</code> required for other jacks before they may
 		 * connect to this jack.
@@ -302,6 +320,7 @@ package com.flextoolbox.controls
 		public function set acceptedDataFormat(value:String):void
 		{
 			this._acceptedDataFormat = value;
+			this.dispatchEvent(new Event("acceptedDataFormatChange"));
 		}
 		
 		/**
@@ -310,7 +329,7 @@ package com.flextoolbox.controls
 		 */
 		private var _maxConnections:uint = uint.MAX_VALUE;
 		
-		[Bindable]
+		[Bindable("maxConnectionsChange")]
 		/**
 		 * The maximum number of wires that may be connected to this jack.
 		 */
@@ -329,6 +348,7 @@ package com.flextoolbox.controls
 				throw new ArgumentError(WireJack.TOO_MANY_EXISTING_CONNECTIONS_ERROR);
 			}
 			this._maxConnections = value;
+			this.dispatchEvent(new Event("maxConnectionsChange"));
 		}
 		
 		/**
@@ -337,6 +357,7 @@ package com.flextoolbox.controls
 		 */
 		private var _connectionAngle:Number = NaN;
 		
+		[Bindable("connectionAngleChange")]
 		/**
 		 * The angle, in degrees, at which the wire enters or exits the jack.
 		 * Used by the wire renderer.
@@ -355,6 +376,7 @@ package com.flextoolbox.controls
 		{
 			this._connectionAngle = value;
 			this.invalidateDisplayList();
+			this.dispatchEvent(new Event("connectionAngleChange"));
 		}
 		
 		/**
@@ -363,6 +385,7 @@ package com.flextoolbox.controls
 		 */
 		private var _ignoredJacks:Array = [];
 		
+		[Bindable("ignoredJacksChange")]
 		/**
 		 * A list of jacks that are always incompatible with this jack.
 		 */
@@ -377,6 +400,7 @@ package com.flextoolbox.controls
 		public function set ignoredJacks(value:Array):void
 		{
 			this._ignoredJacks = value;
+			this.dispatchEvent(new Event("ignoredJacksChange"));
 		}
 		
 		/**
@@ -716,6 +740,31 @@ package com.flextoolbox.controls
 			return otherJack;
 		}
 		
+		/**
+		 * @private
+		 * We're not actually using the DragManager because AIR's version
+		 * doesn't play nice with mouse events. That's okay, though. We can fake
+		 * it nicely with DragProxy, which is where DragEvents come from.
+		 */
+		protected function createFakeDragProxy():void
+		{
+			var source:DragSource = new DragSource();
+			source.addData(this, WIRE_JACK_DRAG_FORMAT);
+			
+			var dragImageType:Object = this.getStyle("dragImage");
+			var dragImage:IFlexDisplayObject = TheInstantiator.newInstance(dragImageType) as IFlexDisplayObject;
+			if(dragImage is ISimpleStyleClient)
+			{
+				ISimpleStyleClient(dragImage).styleName = this.getStyle("dragImageStyleName");
+			}
+			
+			fakeDragProxy = new DragProxy(this, source);
+			PopUpManager.addPopUp(fakeDragProxy, DisplayObject(this.parentApplication));
+			fakeDragProxy.addChild(DisplayObject(dragImage));
+			fakeDragProxy.setActualSize(this.width, this.height);
+			dragImage.setActualSize(this.width, this.height);
+		}
+		
 	//--------------------------------------
 	//  Protected Event Handlers
 	//--------------------------------------
@@ -734,21 +783,11 @@ package com.flextoolbox.controls
 				return;
 			}
 			
-			this.systemManager.addEventListener(MouseEvent.MOUSE_UP, connectionEndHandler);
+			this.systemManager.addEventListener(MouseEvent.MOUSE_UP, connectionEndHandler, false, 0, true);
 			this.addEventListener(DragEvent.DRAG_COMPLETE, connectionEndHandler);
 			
 			this.wireManager.beginConnectionRequest(this);
-			
-			var source:DragSource = new DragSource();
-			source.addData(this, WIRE_JACK_DRAG_FORMAT);
-			
-			var dragImageType:Object = this.getStyle("dragImage");
-			var dragImage:IFlexDisplayObject = TheInstantiator.newInstance(dragImageType) as IFlexDisplayObject;
-			if(dragImage is ISimpleStyleClient)
-			{
-				ISimpleStyleClient(dragImage).styleName = this.getStyle("dragImageStyleName");
-			}
-			DragManager.doDrag(this, source, event, dragImage, -this.mouseX, -this.mouseY, 1);
+			this.createFakeDragProxy();
 		}
 		
 		protected function clickHandler(event:MouseEvent):void 
@@ -762,24 +801,7 @@ package com.flextoolbox.controls
 			this.addEventListener(DragEvent.DRAG_COMPLETE, connectionEndHandler);
 			
 			this.wireManager.beginConnectionRequest(this);
-			
-			//we're going to do a fake drag and drop operation here
-			var source:DragSource = new DragSource();
-			source.addData(this, WIRE_JACK_DRAG_FORMAT);
-			
-			var dragImageType:Object = this.getStyle("dragImage");
-			var dragImage:IFlexDisplayObject = TheInstantiator.newInstance(dragImageType) as IFlexDisplayObject;
-			if(dragImage is ISimpleStyleClient)
-			{
-				ISimpleStyleClient(dragImage).styleName = this.getStyle("dragImageStyleName");
-			}
-			
-			fakeDragProxy = new DragProxy(this, source);
-			
-			this.systemManager["addChildToSandboxRoot"]("popUpChildren", fakeDragProxy);
-			fakeDragProxy.addChild(DisplayObject(dragImage));
-			fakeDragProxy.setActualSize(this.width, this.height);
-			dragImage.setActualSize(this.width, this.height);
+			this.createFakeDragProxy();
 		}
 		
 		/**
@@ -812,7 +834,7 @@ package com.flextoolbox.controls
 		{
 			if(fakeDragProxy)
 			{
-				this.systemManager["removeChildFromSandboxRoot"]("popUpChildren", fakeDragProxy);
+				PopUpManager.removePopUp(fakeDragProxy);
 				fakeDragProxy = null;
 			}
 			
@@ -826,7 +848,6 @@ package com.flextoolbox.controls
 				//this mouseUpEvent. kill it!
 				this.systemManager.addEventListener(MouseEvent.CLICK, function(event:MouseEvent):void
 				{
-					trace("stopping click!");
 					event.currentTarget.removeEventListener(event.type, arguments.callee, true);
 					event.stopImmediatePropagation();
 				}, true);
@@ -865,11 +886,6 @@ package com.flextoolbox.controls
 					fakeDragProxy.target = this;
 					fakeDragProxy.action = DragManager.LINK;
 					fakeDragProxy.showFeedback();
-				}
-				else
-				{
-					DragManager.acceptDragDrop(this);
-					DragManager.showFeedback(DragManager.LINK);
 				}
 			}
 		}

@@ -86,8 +86,6 @@ package com.flextoolbox.managers
 	 */
 	[Event(name="deleteConnection",type="com.flextoolbox.events.WireManagerEvent")]
 	
-	//TODO: Make this into a style client
-	
 	/**
 	 * Manages connections or "wires" that are made between "jacks".
 	 * 
