@@ -26,7 +26,7 @@ Author's Blog:
 Release Notes:
 ---------------------------------------------------------------------------------
 
-??/??/???? - 1.1.0
+07/01/2010 - 1.1.0
    * Added "hasActiveConnectionRequest" to IWireManager and implementations.
    * Added "clickToDrag" static property to WireJack class as an alternative
      that does not require holding the mouse button down to connect wires.

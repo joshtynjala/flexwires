@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
-Wires Library for Adobe Flex
+flexwires Library for Adobe Flex
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Copyright 2009 Josh Tynjala
+Copyright 2010 Josh Tynjala
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to 
@@ -41,6 +41,6 @@ The Original Code is from the Open Source Flex 3 SDK.
 The Initial Developer of the Original Code is Adobe Systems, Inc.
 
 Portions created by Josh Tynjala (joshblog.net) are
-Copyright (C) 2009 Josh Tynjala. All Rights Reserved.
+Copyright (C) 2010 Josh Tynjala. All Rights Reserved.
 
 ////////////////////////////////////////////////////////////////////////////////

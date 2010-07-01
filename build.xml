@@ -56,7 +56,6 @@
 			<arg line="--footer 'Copyright ${date.year} Josh Tynjala. All rights reserved.'"/>
 			<arg line="--main-title '${library.name} Documentation'"/>
 			<arg line="--window-title '${library.name} Documentation'"/>
-			<arg line="--templates-path '${docs.template}'"/>
 			<arg line="--output '${docs.output}'"/>
 		</exec>
 	</target>
