@@ -125,9 +125,14 @@ package com.flextoolbox.controls
 		protected static var fakeDragProxy:DragProxy;
 		
 		/**
-		 * If <code>true</code> dragging a wire from one jack to other will be
-		 * initiated by a mouse "click" event on the first jack rather than the
-		 * standard "mouseDown" event.
+		 * If <code>true</code>, dragging a wire from one jack to other will be
+		 * initiated by a mouse click event on the first jack in addition to
+		 * the standard drag while the mouse is down.
+		 * 
+		 * <p>Note: In previous versions, the dragging could begin only on click
+		 * if clickToDrag is enabled, but not both. This has been changed to
+		 * include both, for usability reasons. Click-dragging is still disabled
+		 * by default, though.</p>
 		 * 
 		 * @example To initialize this alternate behavior, use the following code:
 		 * <listing version="3.0">
@@ -205,11 +210,11 @@ package com.flextoolbox.controls
 			if(this._wireManager)
 			{
 				this._wireManager.deleteJack(this);
-				this._wireManager.removeEventListener(WireManagerEvent.BEGIN_CONNECTION_REQUEST, wireManagerBeginConnectionRequestHandler);
-				this._wireManager.removeEventListener(WireManagerEvent.END_CONNNECTION_REQUEST, wireManagerEndConnectionRequestHandler);
-				this._wireManager.removeEventListener(WireManagerEvent.CREATING_CONNECTION, wireManagerCreatingConnectionHandler);
-				this._wireManager.removeEventListener(WireManagerEvent.CREATE_CONNECTION, wireManagerCreateConnectionHandler);
-				this._wireManager.removeEventListener(WireManagerEvent.DELETE_CONNECTION, wireManagerDeleteConnectionHandler);
+				this._wireManager.removeEventListener(WireManagerEvent.BEGIN_CONNECTION_REQUEST, wireManager_beginConnectionRequestHandler);
+				this._wireManager.removeEventListener(WireManagerEvent.END_CONNNECTION_REQUEST, wireManager_endConnectionRequestHandler);
+				this._wireManager.removeEventListener(WireManagerEvent.CREATING_CONNECTION, wireManager_creatingConnectionHandler);
+				this._wireManager.removeEventListener(WireManagerEvent.CREATE_CONNECTION, wireManager_createConnectionHandler);
+				this._wireManager.removeEventListener(WireManagerEvent.DELETE_CONNECTION, wireManager_deleteConnectionHandler);
 				this._wireManager = null;
 			}
 			
@@ -223,11 +228,11 @@ package com.flextoolbox.controls
 			if(this._wireManager)
 			{
 				this._wireManager.registerJack(this);
-				this._wireManager.addEventListener(WireManagerEvent.BEGIN_CONNECTION_REQUEST, wireManagerBeginConnectionRequestHandler, false, 0, true);
-				this._wireManager.addEventListener(WireManagerEvent.END_CONNNECTION_REQUEST, wireManagerEndConnectionRequestHandler, false, 0, true);
-				this._wireManager.addEventListener(WireManagerEvent.CREATING_CONNECTION, wireManagerCreatingConnectionHandler, false, 0, true);
-				this._wireManager.addEventListener(WireManagerEvent.CREATE_CONNECTION, wireManagerCreateConnectionHandler, false, 0, true);
-				this._wireManager.addEventListener(WireManagerEvent.DELETE_CONNECTION, wireManagerDeleteConnectionHandler, false, 0, true);
+				this._wireManager.addEventListener(WireManagerEvent.BEGIN_CONNECTION_REQUEST, wireManager_beginConnectionRequestHandler, false, 0, true);
+				this._wireManager.addEventListener(WireManagerEvent.END_CONNNECTION_REQUEST, wireManager_endConnectionRequestHandler, false, 0, true);
+				this._wireManager.addEventListener(WireManagerEvent.CREATING_CONNECTION, wireManager_creatingConnectionHandler, false, 0, true);
+				this._wireManager.addEventListener(WireManagerEvent.CREATE_CONNECTION, wireManager_createConnectionHandler, false, 0, true);
+				this._wireManager.addEventListener(WireManagerEvent.DELETE_CONNECTION, wireManager_deleteConnectionHandler, false, 0, true);
 			}
 			this.dispatchEvent(new Event("wireManagerChange"));
 		}
@@ -771,25 +776,27 @@ package com.flextoolbox.controls
 		
 		/**
 		 * @private
-		 * When the mouse is down over the jack, it begins a drag-and-drop
-		 * operation to try to connect to another jack.
+		 * Begins listening for mouseMove to start a drag. If mouseUp happens
+		 * before mouseMove, then there will be no drag (except when clickToDrag
+		 * is set to true, of course, because a click happens after mouseUp).
 		 */
 		protected function mouseDownHandler(event:MouseEvent):void
 		{
 			//don't try to make more connections than this jack allows
 			//or do anything if we're disabled
-			if(this.wireManager.hasActiveConnectionRequest || clickToDrag || this.connectedJacks.length == this.maxConnections || !this.enabled)
+			if(this.wireManager.hasActiveConnectionRequest || this.connectedJacks.length == this.maxConnections || !this.enabled)
 			{
 				return;
 			}
 			
-			this.systemManager.addEventListener(MouseEvent.MOUSE_UP, connectionEndHandler, false, 0, true);
-			this.addEventListener(DragEvent.DRAG_COMPLETE, connectionEndHandler);
-			
-			this.wireManager.beginConnectionRequest(this);
-			this.createFakeDragProxy();
+			this.systemManager.addEventListener(MouseEvent.MOUSE_MOVE, systemManager_mouseMoveHandler, false, 0, true);
+			this.systemManager.addEventListener(MouseEvent.MOUSE_UP, systemManager_mouseUpHandler, false, 0, true);
 		}
 		
+		/**
+		 * @private
+		 * Begins a drag, if possible, when clickToDrag is true.
+		 */
 		protected function clickHandler(event:MouseEvent):void 
 		{
 			if(this.wireManager.hasActiveConnectionRequest || !clickToDrag || this.connectedJacks.length == this.maxConnections || !this.enabled)
@@ -806,6 +813,7 @@ package com.flextoolbox.controls
 		
 		/**
 		 * @private
+		 * Used for skin states.
 		 */
 		protected function rollOverHandler(event:MouseEvent):void
 		{
@@ -820,6 +828,7 @@ package com.flextoolbox.controls
 		
 		/**
 		 * @private
+		 * Used for skin states.
 		 */
 		protected function rollOutHandler(event:MouseEvent):void
 		{
@@ -840,6 +849,7 @@ package com.flextoolbox.controls
 			
 			this.removeEventListener(DragEvent.DRAG_COMPLETE, connectionEndHandler);
 			this.systemManager.removeEventListener(MouseEvent.MOUSE_UP, connectionEndHandler);
+			this.systemManager.removeEventListener(MouseEvent.MOUSE_MOVE, systemManager_mouseMoveHandler);
 			this.wireManager.endConnectionRequest(this);
 			
 			//note: we don't care if the connection was successful here.
@@ -909,10 +919,35 @@ package com.flextoolbox.controls
 		
 		/**
 		 * @private
+		 * Dragging starts after mouseDown when the user has moved the mouse;
+		 */
+		protected function systemManager_mouseMoveHandler(event:MouseEvent):void
+		{
+			this.systemManager.removeEventListener(MouseEvent.MOUSE_UP, systemManager_mouseUpHandler);
+			this.systemManager.removeEventListener(MouseEvent.MOUSE_MOVE, systemManager_mouseMoveHandler);
+			this.systemManager.addEventListener(MouseEvent.MOUSE_UP, connectionEndHandler, false, 0, true);
+			this.addEventListener(DragEvent.DRAG_COMPLETE, connectionEndHandler);
+			
+			this.wireManager.beginConnectionRequest(this);
+			this.createFakeDragProxy();
+		}
+		
+		/**
+		 * @private
+		 * Stop checking for a potential drag started with mouseDown.
+		 */
+		protected function systemManager_mouseUpHandler(event:MouseEvent):void
+		{
+			this.systemManager.removeEventListener(MouseEvent.MOUSE_UP, systemManager_mouseUpHandler);
+			this.systemManager.removeEventListener(MouseEvent.MOUSE_MOVE, systemManager_mouseMoveHandler);
+		}
+		
+		/**
+		 * @private
 		 * This jack will be highlighted if it is compatible with a jack that
 		 * is requesting a connection from the wire manager.
 		 */
-		protected function wireManagerBeginConnectionRequestHandler(event:WireManagerEvent):void
+		protected function wireManager_beginConnectionRequestHandler(event:WireManagerEvent):void
 		{
 			var otherJack:WireJack = event.startJack;
 			if(this.isCompatibleWithJack(otherJack) && otherJack.isCompatibleWithJack(this))
@@ -925,7 +960,7 @@ package com.flextoolbox.controls
 		 * @private
 		 * Any time a connection request is ended, remove the highlight.
 		 */
-		protected function wireManagerEndConnectionRequestHandler(event:WireManagerEvent):void
+		protected function wireManager_endConnectionRequestHandler(event:WireManagerEvent):void
 		{
 			this.highlighted = false;
 		}
@@ -933,7 +968,7 @@ package com.flextoolbox.controls
 		/**
 		 * @private
 		 */
-		protected function wireManagerCreatingConnectionHandler(event:WireManagerEvent):void
+		protected function wireManager_creatingConnectionHandler(event:WireManagerEvent):void
 		{
 			var otherJack:WireJack = this.findOtherJack(event);
 			if(!otherJack)
@@ -952,7 +987,7 @@ package com.flextoolbox.controls
 		/**
 		 * @private
 		 */
-		protected function wireManagerCreateConnectionHandler(event:WireManagerEvent):void
+		protected function wireManager_createConnectionHandler(event:WireManagerEvent):void
 		{
 			var otherJack:WireJack = this.findOtherJack(event);
 			if(!otherJack)
@@ -976,7 +1011,7 @@ package com.flextoolbox.controls
 		 * Removes a connection between jacks. If there is no connection, then
 		 * it is ignored.
 		 */
-		protected function wireManagerDeleteConnectionHandler(event:WireManagerEvent):void
+		protected function wireManager_deleteConnectionHandler(event:WireManagerEvent):void
 		{
 			var otherJack:WireJack = this.findOtherJack(event);
 			if(!otherJack)
