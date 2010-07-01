@@ -10,3 +10,4 @@ bash.exe.stackdump
 *.swf
 *.swc
 *.zip
+sdk.local.properties

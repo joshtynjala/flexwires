@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="flexwires" default="build" basedir=".">
-
+	<!-- sdk.local.properties can be used to override props -->
+	<property file="./sdk.local.properties"/>
 	<property file="./sdk.properties"/>
 	<property file="./build.properties"/>
 	
