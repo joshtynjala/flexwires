@@ -130,9 +130,8 @@ package com.flextoolbox.controls
 		 * the standard drag while the mouse is down.
 		 * 
 		 * <p>Note: In previous versions, the dragging could begin only on click
-		 * if clickToDrag is enabled, but not both. This has been changed to
-		 * include both, for usability reasons. Click-dragging is still disabled
-		 * by default, though.</p>
+		 * if clickToDrag is enabled. For usability reasons, this has been
+		 * changed to include the default behavior as well.</p>
 		 * 
 		 * @example To initialize this alternate behavior, use the following code:
 		 * <listing version="3.0">
@@ -546,7 +545,7 @@ package com.flextoolbox.controls
 		 * 
 		 * <ul>
 		 * 	<li>The other jack cannot be <code>null</code>.</li>
-		 * 	<li>The other jack cannot be equal to <code>this</code><li>
+		 * 	<li>The other jack cannot be equal to <code>this</code></li>
 		 * 	<li>The other jack's <code>dataFormat</code> must be equal to this
 		 * jack's <code>acceptedDataFormat</code>.</li>
 		 * 	<li>This jack may not exceed its maximum number of connections.</li>
