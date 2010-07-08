@@ -280,6 +280,10 @@ package com.flextoolbox.managers
 					DisplayObjectContainer(this.wireSurface).addChild(DisplayObject(wire));
 					this.wires.push(wire);
 					
+					//we need to save and restore the old value because
+					//connect() could be called somewhere in response to the
+					//CREATE_CONNECTION event we're about to dispatch.
+					var oldConnecting:Boolean = this.connecting;
 					//this flag indicates that a connection is in progress.
 					//disconnect requests during this time will be queued until
 					//the connection is complete because not all jacks may have
@@ -287,7 +291,7 @@ package com.flextoolbox.managers
 					this.connecting = true;
 					var create:WireManagerEvent = new WireManagerEvent(WireManagerEvent.CREATE_CONNECTION, startJack, endJack);
 					this.dispatchEvent(create);
-					this.connecting = false;
+					this.connecting = oldConnecting;
 				}
 				return result;
 			}
