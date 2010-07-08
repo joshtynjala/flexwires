@@ -238,6 +238,17 @@ package com.flextoolbox.controls
 		
 		/**
 		 * @private
+		 */
+		override public function set enabled(value:Boolean):void
+		{
+			super.enabled = value;
+			//UIComponent only calls invalidateDisplayList(), but we need to
+			//make sure commitProperties() is called to update the skin state.
+			this.invalidateProperties();
+		}
+		
+		/**
+		 * @private
 		 * Storage for the data property.
 		 */
 		private var _data:Object;
@@ -411,7 +422,7 @@ package com.flextoolbox.controls
 		 * @private
 		 * Storage for the connectedJacks property.
 		 */
-		private var _connectedJacks:Array /*Vector.<WireJack>*/ = [];
+		private var _connectedJacks:Vector.<WireJack> = new Vector.<WireJack>;
 		
 		/**
 		 * The other jacks that are currently connected to this jack. Do not
@@ -421,7 +432,7 @@ package com.flextoolbox.controls
 		 * @see #connectToJack()
 		 * @see #disconnect()
 		 */
-		public function get connectedJacks():Array //Vector.<WireJack>
+		public function get connectedJacks():Vector.<WireJack>
 		{
 			return this._connectedJacks.concat();
 		}
@@ -531,10 +542,13 @@ package com.flextoolbox.controls
 		 */
 		public function disconnectAll():void
 		{
-			var otherJackCount:int = this.connectedJacks.length;
+			//make a copy to avoid any issues where connectedJacks might change
+			//between disconnections.
+			var jacks:Vector.<WireJack> = this.connectedJacks.concat();
+			var otherJackCount:int = jacks.length;
 			for(var i:int = 0; i < otherJackCount; i++)
 			{
-				var otherJack:WireJack = WireJack(this.connectedJacks[i]);
+				var otherJack:WireJack = jacks[i];
 				this.disconnect(otherJack);
 			}
 		}
