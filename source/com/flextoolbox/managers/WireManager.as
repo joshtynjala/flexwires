@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2008 Josh Tynjala
+//  Copyright (c) 2010 Josh Tynjala
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to 
@@ -149,13 +149,13 @@ package com.flextoolbox.managers
 		 * @private
 		 * The jacks registered with this wire manager.
 		 */
-		protected var jacks:Array = [];
+		protected var jacks:Vector.<WireJack> = new Vector.<WireJack>;
 		
 		/**
 		 * @private
 		 * The wires created by this wire manager.
 		 */
-		protected var wires:Array = [];
+		protected var wires:Vector.<IWireRenderer> = new Vector.<IWireRenderer>;
 		
 		/**
 		 * @private
@@ -182,7 +182,29 @@ package com.flextoolbox.managers
 		 */
 		public function set wireRenderer(value:IFactory):void
 		{
+			if(!value)
+			{
+				throw new ArgumentError("wireRenderer factory cannot be null");
+			}
 			this._wireRenderer = value;
+			
+			//change all the existing wire renderers to the new factory
+			const wireCount:int = this.wires.length;
+			for(var i:int = 0; i < wireCount; i++)
+			{
+				var newWire:IWireRenderer = this._wireRenderer.newInstance();
+				var wire:IWireRenderer = this.wires[i];
+				newWire.wireManager = this;
+				newWire.jack1 = wire.jack1;
+				newWire.jack2 = wire.jack2;
+				var surface:DisplayObjectContainer = DisplayObjectContainer(this.wireSurface);
+				surface.addChildAt(DisplayObject(newWire), surface.getChildIndex(DisplayObject(wire)));
+				this.wires[i] = newWire;
+				surface.removeChild(DisplayObject(wire));
+				wire.jack1 = null;
+				wire.jack2 = null;
+				wire.wireManager = null;
+			}
 		}
 		
 		private var _hasActiveConnectionRequest:Boolean = false;
@@ -257,12 +279,19 @@ package com.flextoolbox.managers
 			
 			if(startJack == endJack)
 			{
-				throw new ArgumentError("Cannot connect a jack to itself. No connection.");
+				throw new ArgumentError("Cannot connect a jack to itself.");
 			}
 			
 			if(this.jacks.indexOf(startJack) < 0 || this.jacks.indexOf(endJack) < 0)
 			{
 				throw new ArgumentError("One or more of the specified jacks are not registered with this wire manager.");
+			}
+			
+			if(startJack.isConnectedToJack(endJack))
+			{
+				//I'm not sure if I like this requirement, but it seems
+				//pragmatic because wires will overlap.
+				throw new IllegalOperationError("Cannot connect a jack to another jack that it is already connected to.");
 			}
 			
 			//check if both jacks are compatible
@@ -321,23 +350,32 @@ package com.flextoolbox.managers
 				throw new ArgumentError("One or more of the specified jacks are not registered with this wire manager.");
 			}
 			
-			var connections:Array = this.wires.filter(function(wire:IWireRenderer, index:int, source:Array):Boolean
-			{
-				return (wire.jack1 == startJack || wire.jack1 == endJack) &&
-					(wire.jack2 == startJack || wire.jack2 == endJack);
-			});
-			
-			for each(var wire:IWireRenderer in connections)
-			{
-				var index:int = this.wires.indexOf(wire);
-				this.wires.splice(index, 1);
-				DisplayObjectContainer(this.wireSurface).removeChild(DisplayObject(wire));
-				wire.jack1 = null;
-				wire.jack2 = null;
-			}
+			var wire:IWireRenderer = this.getWireBetween(startJack, endJack);
+			var index:int = this.wires.indexOf(wire);
+			this.wires.splice(index, 1);
+			DisplayObjectContainer(this.wireSurface).removeChild(DisplayObject(wire));
+			wire.jack1 = null;
+			wire.jack2 = null;
+			wire.wireManager = null;
 			
 			var deleteConnection:WireManagerEvent = new WireManagerEvent(WireManagerEvent.DELETE_CONNECTION, startJack, endJack);
 			this.dispatchEvent(deleteConnection);
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function getWireBetween(startJack:WireJack, endJack:WireJack):IWireRenderer
+		{
+			for each(var wire:IWireRenderer in this.wires)
+			{
+				if((wire.jack1 == startJack && wire.jack2 == endJack) ||
+					(wire.jack1 == endJack && wire.jack2 == startJack))
+				{
+					return wire;
+				}
+			}
+			return null;
 		}
 
 	}

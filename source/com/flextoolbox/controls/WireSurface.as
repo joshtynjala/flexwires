@@ -24,6 +24,7 @@
 
 package com.flextoolbox.controls
 {
+	import com.flextoolbox.controls.wireClasses.IWireRenderer;
 	import com.flextoolbox.events.WireManagerEvent;
 	import com.flextoolbox.managers.IWireManager;
 	import com.flextoolbox.managers.WireManager;
@@ -199,6 +200,14 @@ package com.flextoolbox.controls
 		public function disconnect(startJack:WireJack, endJack:WireJack):void
 		{
 			this.manager.disconnect(startJack, endJack);
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function getWireBetween(startJack:WireJack, endJack:WireJack):IWireRenderer
+		{
+			return this.manager.getWireBetween(startJack, endJack);
 		}
 		
 		/**

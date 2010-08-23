@@ -40,6 +40,7 @@
 	
 	<target name="build-lib" depends="prepare">
 	    <exec executable="${compc}" dir="${basedir}" failonerror="true">
+			<arg line="--target-player 10.0.0"/>
 			<arg line="--namespace ${library.mxmlNamespace} manifest.xml"/>
 			<arg line="--source-path '${source.output}'"/>
 			<arg line="--include-stylesheet defaults.css source/defaults.css"/>
@@ -52,6 +53,7 @@
 	
 	<target name="build-docs" depends="prepare">
 		<exec executable="${asdoc}" dir="${basedir}" failonerror="true">
+			<arg line="--target-player 10.0.0"/>
 			<arg line="--source-path '${source.output}'"/>
 			<arg line="--doc-sources '${source.output}'"/>
 			<arg line="--footer 'Copyright ${date.year} Josh Tynjala. All rights reserved.'"/>

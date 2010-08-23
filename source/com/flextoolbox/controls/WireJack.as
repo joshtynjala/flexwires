@@ -963,7 +963,9 @@ package com.flextoolbox.controls
 		protected function wireManager_beginConnectionRequestHandler(event:WireManagerEvent):void
 		{
 			var otherJack:WireJack = event.startJack;
-			if(this.isCompatibleWithJack(otherJack) && otherJack.isCompatibleWithJack(this))
+			if(this.isCompatibleWithJack(otherJack) &&
+				otherJack.isCompatibleWithJack(this) &&
+				!this.isConnectedToJack(otherJack))
 			{
 				this.highlighted = true;
 			}

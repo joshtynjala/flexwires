@@ -30,6 +30,8 @@ The Next Release
    * Fixed issue where connecting property of WireManager could be incorrectly set to false.
    * Fixed null reference error in WireJack when calling disconnectAll().
    * WireJack skin now properly changes state when enabled changes.
+   * Added getWireBetween() to IWireManager
+   * Changing wireRenderer on IWireManager will now recreate existing wires.
    
 07/01/2010 - 1.1.0
    * Added "hasActiveConnectionRequest" to IWireManager and implementations.

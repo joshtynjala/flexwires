@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2009 Josh Tynjala
+//  Copyright (c) 2010 Josh Tynjala
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to 
@@ -25,6 +25,7 @@
 package com.flextoolbox.managers
 {
 	import com.flextoolbox.controls.WireJack;
+	import com.flextoolbox.controls.wireClasses.IWireRenderer;
 	
 	import flash.events.IEventDispatcher;
 	
@@ -158,5 +159,15 @@ package com.flextoolbox.managers
 		 * @param endJack		The second jack to connect.
 		 */
 		function disconnect(startJack:WireJack, endJack:WireJack):void;
+		
+		/**
+		 * Returns the wire that connects two jacks. If there is no connection
+		 * between the jacks, returns null.
+		 * 
+		 * @param startJack		A jack.
+		 * @param endJack		Another jack.
+		 * @return				The IWireRenderer that connects the two jacks.
+		 */
+		function getWireBetween(startJack:WireJack, endJack:WireJack):IWireRenderer;
 	}
 }
