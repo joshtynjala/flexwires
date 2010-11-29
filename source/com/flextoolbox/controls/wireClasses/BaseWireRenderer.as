@@ -28,6 +28,7 @@ package com.flextoolbox.controls.wireClasses
 	import com.flextoolbox.managers.IWireManager;
 	import com.yahoo.astra.utils.DisplayObjectUtil;
 	
+	import flash.display.Shape;
 	import flash.events.Event;
 	import flash.geom.Point;
 	
@@ -42,6 +43,12 @@ package com.flextoolbox.controls.wireClasses
 	 */
 	public class BaseWireRenderer extends UIComponent implements IWireRenderer
 	{
+		
+	//--------------------------------------
+	//  Constructor
+	//--------------------------------------
+		
+		private static const FRAME_EVENT_SHAPE:Shape = new Shape();
 		
 	//--------------------------------------
 	//  Constructor
@@ -107,6 +114,12 @@ package com.flextoolbox.controls.wireClasses
 		
 		/**
 		 * @private
+		 * Flag to indicate if this wire will redraw every frame.
+		 */
+		private var _isListeningForEnterFrame:Boolean = false;
+		
+		/**
+		 * @private
 		 * Storage for the wireManager property.
 		 */
 		private var _wireManager:IWireManager;
@@ -167,20 +180,20 @@ package com.flextoolbox.controls.wireClasses
 		{
 			super.updateDisplayList(unscaledWidth, unscaledHeight);
 			
-			this.graphics.clear();
-			
 			if(!this.jack1 || !this.jack2)
 			{
-				this.removeEventListener(Event.ENTER_FRAME, enterFrameHandler);
+				FRAME_EVENT_SHAPE.removeEventListener(Event.ENTER_FRAME, enterFrameHandler);
+				this._isListeningForEnterFrame = false;
 				return;
 			}
 			
 			//we have to know when the wire jack moves, or one of its parents
 			//moves. there's no event for that, so we have to check every frame
 			//possible optimization: do it in the manager.
-			if(!this.hasEventListener(Event.ENTER_FRAME))
+			if(!this._isListeningForEnterFrame)
 			{
-				this.addEventListener(Event.ENTER_FRAME, enterFrameHandler);
+				this._isListeningForEnterFrame = true;
+				FRAME_EVENT_SHAPE.addEventListener(Event.ENTER_FRAME, enterFrameHandler);
 			}
 			
 			var jackPositions:Array = this.calculateJackPositions();
