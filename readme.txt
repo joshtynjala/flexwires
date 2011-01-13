@@ -32,6 +32,7 @@ The Next Release
    * WireJack skin now properly changes state when enabled changes.
    * Added getWireBetween() to IWireManager
    * Changing wireRenderer on IWireManager will now recreate existing wires.
+   * Added cancelable WireManagerEvent.DELETING_CONNECTION to match CREATING_CONNECTION.
    
 07/01/2010 - 1.1.0
    * Added "hasActiveConnectionRequest" to IWireManager and implementations.
