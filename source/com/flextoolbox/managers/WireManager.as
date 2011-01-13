@@ -65,7 +65,7 @@ package com.flextoolbox.managers
 	[Event(name="endConnectionRequest",type="com.flextoolbox.events.WireManagerEvent")]
 	
 	/**
-	 * Dispatched when a connection will soon made between two WireJack
+	 * Dispatched when a connection will soon be created between two WireJack
 	 * instances. May be cancelled.
 	 * 
 	 * @eventType com.flextoolbox.events.WireManagerEvent.CREATING_CONNECTION
@@ -78,6 +78,14 @@ package com.flextoolbox.managers
 	 * @eventType com.flextoolbox.events.WireManagerEvent.CREATE_CONNECTION
 	 */
 	[Event(name="createConnection",type="com.flextoolbox.events.WireManagerEvent")]
+	
+	/**
+	 * Dispatched when a connection will soon be deleted between two WireJack
+	 * instances. May be cancelled.
+	 * 
+	 * @eventType com.flextoolbox.events.WireManagerEvent.DELETING_CONNECTION
+	 */
+	[Event(name="deletingConnection",type="com.flextoolbox.events.WireManagerEvent")]
 	
 	/**
 	 * Dispatched when a connection is deleted between two WireJack instances.
@@ -350,16 +358,21 @@ package com.flextoolbox.managers
 				throw new ArgumentError("One or more of the specified jacks are not registered with this wire manager.");
 			}
 			
-			var wire:IWireRenderer = this.getWireBetween(startJack, endJack);
-			var index:int = this.wires.indexOf(wire);
-			this.wires.splice(index, 1);
-			DisplayObjectContainer(this.wireSurface).removeChild(DisplayObject(wire));
-			wire.jack1 = null;
-			wire.jack2 = null;
-			wire.wireManager = null;
-			
-			var deleteConnection:WireManagerEvent = new WireManagerEvent(WireManagerEvent.DELETE_CONNECTION, startJack, endJack);
-			this.dispatchEvent(deleteConnection);
+			var deleting:WireManagerEvent = new WireManagerEvent(WireManagerEvent.DELETING_CONNECTION, startJack, endJack, true);
+			var result:Boolean = this.dispatchEvent(deleting);
+			if(result)
+			{
+				var wire:IWireRenderer = this.getWireBetween(startJack, endJack);
+				var index:int = this.wires.indexOf(wire);
+				this.wires.splice(index, 1);
+				DisplayObjectContainer(this.wireSurface).removeChild(DisplayObject(wire));
+				wire.jack1 = null;
+				wire.jack2 = null;
+				wire.wireManager = null;
+				
+				var deleteConnection:WireManagerEvent = new WireManagerEvent(WireManagerEvent.DELETE_CONNECTION, startJack, endJack);
+				this.dispatchEvent(deleteConnection);
+			}
 		}
 		
 		/**

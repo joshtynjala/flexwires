@@ -76,6 +76,15 @@ package com.flextoolbox.events
 		public static const CREATE_CONNECTION:String = "createConnection";
 		
 		/**
+		 * The WireManagerEvent.DELETING_CONNECTION constant defines the
+		 * value of the <code>type</code> property of a WireManagerEvent object
+		 * for a <code>deletingConnection</code> event, which indicates that
+		 * two WireJack instances will soon be disconnected. This action may be
+		 * cancelled.
+		 */
+		public static const DELETING_CONNECTION:String = "deletingConnection";
+		
+		/**
 		 * The WireManagerEvent.DELETE_CONNECTION constant defines the
 		 * value of the <code>type</code> property of a WireManagerEvent object
 		 * for a <code>deleteConnection</code> event, which indicates that

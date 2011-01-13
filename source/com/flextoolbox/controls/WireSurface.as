@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2009 Josh Tynjala
+//  Copyright (c) 2010 Josh Tynjala
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to 
@@ -70,12 +70,28 @@ package com.flextoolbox.controls
 	[Event(name="endConnectionRequest",type="com.flextoolbox.events.WireManagerEvent")]
 	
 	/**
+	 * Dispatched when a connection will soon be created between two WireJack
+	 * instances. May be cancelled.
+	 * 
+	 * @eventType com.flextoolbox.events.WireManagerEvent.CREATING_CONNECTION
+	 */
+	[Event(name="creatingConnection",type="com.flextoolbox.events.WireManagerEvent")]
+	
+	/**
 	 * Dispatched when a connection is made between two WireJack instances. May
 	 * be cancelled.
 	 * 
 	 * @eventType com.flextoolbox.events.WireManagerEvent.CREATE_CONNECTION
 	 */
 	[Event(name="createConnection",type="com.flextoolbox.events.WireManagerEvent")]
+	
+	/**
+	 * Dispatched when a connection will soon be deleted between two WireJack
+	 * instances. May be cancelled.
+	 * 
+	 * @eventType com.flextoolbox.events.WireManagerEvent.DELETING_CONNECTION
+	 */
+	[Event(name="deletingConnection",type="com.flextoolbox.events.WireManagerEvent")]
 	
 	/**
 	 * Dispatched when a connection is deleted between two WireJack instances.
@@ -234,7 +250,11 @@ package com.flextoolbox.controls
 		 */
 		protected function managerEventHandler(event:WireManagerEvent):void
 		{
-			this.dispatchEvent(event);
+			var result:Boolean = this.dispatchEvent(event.clone());
+			if(event.cancelable && !result)
+			{
+				event.preventDefault();
+			}
 		}
 	}
 }
