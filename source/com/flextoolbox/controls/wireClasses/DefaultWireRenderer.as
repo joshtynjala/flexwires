@@ -26,13 +26,9 @@ package com.flextoolbox.controls.wireClasses
 {
 	import com.joshtynjala.utils.BezierUtil;
 	import com.yahoo.astra.utils.DisplayObjectUtil;
-	import com.yahoo.astra.utils.GeomUtil;
 	
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
-	
-	import mx.styles.CSSStyleDeclaration;
-	import mx.styles.StyleManager;
 
 	//--------------------------------------
 	//  Styles
@@ -123,21 +119,42 @@ package com.flextoolbox.controls.wireClasses
 			
 			var distance:Number = Math.min(100, Point.distance(start, end) / 2);
 			
-			var controlPoints:Array = [c1, c2];
+			var controlPoints:Vector.<Point> = new <Point>[c1, c2];
 			if(!isNaN(angle1))
 			{
-				var d1:Point = Point.polar(distance, GeomUtil.degreesToRadians(angle1));
+				var d1:Point = Point.polar(distance, angle1 * Math.PI / 180);
 				d1.y *= -1;
 				d1 = d1.add(start);
-				controlPoints[0] = d1;
+				if(d1.x == c1.x)
+				{
+					c1.y = d1.y;
+				}
+				else if(d1.y == c1.y)
+				{
+					c1.x = d1.x;
+				}
+				else
+				{
+					controlPoints[0] = d1;
+				}
 			}
 			if(!isNaN(angle2))
 			{
-				var d2:Point = Point.polar(distance, GeomUtil.degreesToRadians(angle2));
+				var d2:Point = Point.polar(distance, angle2 * Math.PI / 180);
 				d2.y *= -1;
 				d2 = d2.add(end);
-				controlPoints.push(d2);
-				controlPoints[1] = d2;
+				if(d2.x == c2.x)
+				{
+					c2.y = d2.y;
+				}
+				else if(d2.y == c2.y)
+				{
+					c2.x = d2.x;
+				}
+				else
+				{
+					controlPoints[1] = d2;
+				}
 			}
 			
 			var thickness:Number = this.getStyle("thickness");
