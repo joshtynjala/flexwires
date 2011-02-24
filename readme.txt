@@ -33,6 +33,7 @@ The Next Release
    * Added getWireBetween() to IWireManager
    * Changing wireRenderer on IWireManager will now recreate existing wires.
    * Added cancelable WireManagerEvent.DELETING_CONNECTION to match CREATING_CONNECTION.
+   * Simplified and fixed choosing of bezier points in DefaultWireRenderer.
    
 07/01/2010 - 1.1.0
    * Added "hasActiveConnectionRequest" to IWireManager and implementations.
