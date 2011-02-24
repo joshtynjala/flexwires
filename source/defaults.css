@@ -18,7 +18,7 @@ DefaultWireRenderer
 	fillColor: #cccccc;
 	borderColor: #919999;
 	thickness: 6;
-	bezierPrecision: 150;
+	bezierPrecision: 50;
 	disconnectCursorSkin: ClassReference("com.flextoolbox.skins.cursor.DisconnectCursor");
 }
 
