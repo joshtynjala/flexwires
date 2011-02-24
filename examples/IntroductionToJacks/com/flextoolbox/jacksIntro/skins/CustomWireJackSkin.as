@@ -4,7 +4,6 @@ package com.flextoolbox.jacksIntro.skins
 	import com.flextoolbox.controls.OutputWireJack;
 	import com.flextoolbox.controls.WireJack;
 	import com.yahoo.astra.utils.DynamicRegistration;
-	import com.yahoo.astra.utils.GeomUtil;
 	
 	import flash.display.GradientType;
 	import flash.display.Shape;
