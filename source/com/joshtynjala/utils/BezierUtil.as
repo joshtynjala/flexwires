@@ -57,17 +57,20 @@ package com.joshtynjala.utils
 		 * @param controls		The control points of the curve.
 		 * @param precision		The number of line segments to use to draw the curve.
 		 */
-		public static function drawBezierCurve(graphics:Graphics, start:Point, end:Point, controls:Array /* of Point */, precision:int):void
+		public static function drawBezierCurve(graphics:Graphics, start:Point, end:Point, controls:Vector.<Point>, precision:int):void
 		{
-			var points:Array = controls.concat();
+			var points:Vector.<Point> = controls.concat();
 			points.unshift(start);
 			points.push(end);
 			
-			var knotVector:Array = createKnotVector(precision);
+			var knotVector:Vector.<Number> = createKnotVector(precision);
 			var knotVectorLength:int = knotVector.length;
+			var bezierPoint:Point = new Point();
 			for(var i:int = 0; i < knotVectorLength; i++)
 			{
-				var p:Point = getBezierPoint(knotVector, i, points);
+				bezierPoint.x = 0;
+				bezierPoint.y = 0;
+				var p:Point = getBezierPoint(bezierPoint, knotVector[i], points);
 				if(i == 0)
 				{
 					graphics.moveTo(p.x, p.y);
@@ -87,9 +90,9 @@ package com.joshtynjala.utils
 		 * @private
 		 * Generates a knot vector.
 		 */
-		private static function createKnotVector(precision:int):Array
+		private static function createKnotVector(precision:int):Vector.<Number>
 		{
-			var result:Array = [];
+			var result:Vector.<Number> = new <Number>[];
 			for(var i:int = 0; i <= precision; i++){
 				//T.push(i / precision);
 				//T.push((i / precision) * (i / precision));
@@ -102,16 +105,13 @@ package com.joshtynjala.utils
 		 * @private
 		 * Gets a point for the next line segment.
 		 */
-		private static function getBezierPoint(knotVector:Array, index:int, points:Array):Point
+		private static function getBezierPoint(bezierPoint:Point, knotValue:Number, points:Vector.<Point>):Point
 		{
-			var value:Number = knotVector[index];
-			
-			var bezierPoint:Point = new Point();
-			var pointCount:int = points.length
+			var pointCount:int = points.length;
 			for(var i:int = 0; i < pointCount; i++)
 			{
-				var r:Number = MathUtil.binomialCoefficient(pointCount - 1, i) * Math.pow(1 - value, pointCount - 1 - i) * Math.pow(value, i);
-				var p:Point = Point(points[i]);
+				var r:Number = MathUtil.binomialCoefficient(pointCount - 1, i) * Math.pow(1 - knotValue, pointCount - 1 - i) * Math.pow(knotValue, i);
+				var p:Point = points[i];
 				bezierPoint = bezierPoint.add(PointUtil.scalarMultiply(p, r));
 			}
 			return bezierPoint;
