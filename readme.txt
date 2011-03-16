@@ -23,16 +23,28 @@ Author's Blog:
    * http://joshblog.net/
 
 ---------------------------------------------------------------------------------
+Usage Tips:
+---------------------------------------------------------------------------------
+
+1. flexwires uses a defaults.css for maximum compatibility with Flex 4. The
+default styles and skins only get included automatically when you link the
+project into your Flex application as a SWC. If you need to make source code
+changes, you should build a new SWC. See build.xml for details on recommended
+compiler arguments.
+
+---------------------------------------------------------------------------------
 Release Notes:
 ---------------------------------------------------------------------------------
 
 The Next Release
-   * Fixed issue where connecting property of WireManager could be incorrectly set to false.
+   * Fixed issue where connecting property of WireManager could be incorrectly
+     set to false.
    * Fixed null reference error in WireJack when calling disconnectAll().
    * WireJack skin now properly changes state when enabled changes.
    * Added getWireBetween() to IWireManager
    * Changing wireRenderer on IWireManager will now recreate existing wires.
-   * Added cancelable WireManagerEvent.DELETING_CONNECTION to match CREATING_CONNECTION.
+   * Added cancelable WireManagerEvent.DELETING_CONNECTION to match
+     CREATING_CONNECTION.
    * Simplified and fixed choosing of bezier points in DefaultWireRenderer.
    
 07/01/2010 - 1.1.0
