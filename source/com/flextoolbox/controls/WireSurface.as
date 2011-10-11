@@ -129,6 +129,7 @@ package com.flextoolbox.controls
 			this.manager.addEventListener(WireManagerEvent.END_CONNNECTION_REQUEST, managerEventHandler);
 			this.manager.addEventListener(WireManagerEvent.CREATING_CONNECTION, managerEventHandler);
 			this.manager.addEventListener(WireManagerEvent.CREATE_CONNECTION, managerEventHandler);
+			this.manager.addEventListener(WireManagerEvent.DELETING_CONNECTION, managerEventHandler);
 			this.manager.addEventListener(WireManagerEvent.DELETE_CONNECTION, managerEventHandler);
 		}
 		
